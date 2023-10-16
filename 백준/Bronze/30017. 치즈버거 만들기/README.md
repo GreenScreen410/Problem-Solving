@@ -4,7 +4,7 @@
 
 ### 성능 요약
 
-메모리: 31120 KB, 시간: 48 ms
+메모리: 31120 KB, 시간: 40 ms
 
 ### 분류
 
@@ -12,13 +12,13 @@
 
 ### 제출 일자
 
-2023년 10월 16일 16:22:40
+2023년 10월 16일 16:28:26
 
 ### 문제 설명
 
 <p>승현이가 일하는 햄버거 가게에는 요리 재료로 사용할 햄버거 패티가 <mjx-container class="MathJax" jax="CHTML" style="font-size: 109%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D434 TEX-I"></mjx-c></mjx-mi></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>A</mi></math></mjx-assistive-mml><span aria-hidden="true" class="no-mathjax mjx-copytext">$A$</span></mjx-container>개, 슬라이스 치즈가 <mjx-container class="MathJax" jax="CHTML" style="font-size: 109%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D435 TEX-I"></mjx-c></mjx-mi></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>B</mi></math></mjx-assistive-mml><span aria-hidden="true" class="no-mathjax mjx-copytext">$B$</span></mjx-container>개 있다. 치즈버거를 만들기 위해서는 패티와 치즈를 각각 한 개 이상 고른 후 햄버거 빵 사이에 패티와 치즈를 번갈아 쌓아야 한다. 단, 패티의 개수는 치즈의 개수보다 정확히 한 개 더 많이 골라야 한다.</p>
 
-<p style="text-align:center;"><img alt="" src="" width="400px"></p>
+<p style="text-align:center;"><img alt="" src="https://upload.acmicpc.net/4cc67b19-743a-4303-98d8-bdd1f0d0ca56/-/preview/" width="400px"></p>
 
 <p>승현이는 가게에 있는 요리 재료를 가지고 최대한 큰 치즈버거를 하나 만들려고 한다. 치즈버거의 크기는 패티와 치즈의 개수를 더한 것과 같다. 승현이가 만들 수 있는 치즈버거의 최대 크기를 구해보자.</p>
 
