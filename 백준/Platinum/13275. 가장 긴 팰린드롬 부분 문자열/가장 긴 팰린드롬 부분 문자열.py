@@ -1,4 +1,5 @@
-def manacher(S, N):
+def manacher(S):
+    N = len(S)
     A = [0] * N
     r, p = 0, 0
     for i in range(N):
@@ -12,4 +13,4 @@ def manacher(S, N):
     return A
 
 S = "#" + "#".join(input()) + "#"
-print(max(manacher(S, len(S))))
+print(max(manacher(S)))
