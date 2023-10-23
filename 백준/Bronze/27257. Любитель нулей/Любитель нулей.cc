@@ -10,7 +10,7 @@ int main() {
     if (k[i] == '0') answer++;
   }
 
-  for (int i = k.length() - 1; i != 0; i--) {
+  for (int i = k.length() - 1; i >= 0; i--) {
     if (k[i] == '0') {
       answer--;
     } else {
