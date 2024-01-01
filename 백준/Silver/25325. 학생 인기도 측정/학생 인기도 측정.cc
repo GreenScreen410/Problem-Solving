@@ -3,8 +3,8 @@
 using namespace std;
 
 bool compare(const pair<string, int>& a, const pair<string, int>& b) {
-    if (a.second == b.second) return a.first < b.first;
-    return a.second > b.second;
+  if (a.second == b.second) return a.first < b.first;
+  return a.second > b.second;
 }
 
 int main() {
