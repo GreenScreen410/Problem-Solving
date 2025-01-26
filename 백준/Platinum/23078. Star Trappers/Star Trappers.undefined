@@ -1,0 +1,131 @@
+#include <algorithm>
+#include <iostream>
+#include <cmath>
+#include <iomanip>
+#include <vector>
+using namespace std;
+
+struct Point {
+  long long x, y;
+
+  bool operator< (const Point& other) const {
+    if (x == other.x) return y < other.y;
+    return x < other.x;
+  }
+};
+
+long long ccw(Point a, Point b, Point c) {
+  return a.x * b.y + b.x * c.y + c.x * a.y - b.x * a.y - c.x * b.y - a.x * c.y;
+}
+
+vector<Point> convex_hull(vector<Point> points) {
+  sort(points.begin(), points.end(), [](Point a, Point b) {
+    return a.y < b.y || (a.y == b.y && a.x < b.x);
+  });
+  Point pivot = points[0];
+  sort(points.begin() + 1, points.end(), [pivot](Point a, Point b) {
+    long long cp = ccw(pivot, a, b);
+    return cp > 0 || (cp == 0 && (a.y < b.y || (a.y == b.y && a.x < b.x)));
+  });
+  
+  vector<Point> hull = {points[0], points[1]};
+  for (int i = 2; i < points.size(); i++) {
+    while (hull.size() >= 2 && ccw(hull[hull.size() - 2], hull.back(), points[i]) <= 0) {
+      hull.pop_back();
+    }
+    hull.push_back(points[i]);
+  }
+  
+  if (hull.size() > 1 && hull[0].x == hull.back().x && hull[0].y == hull.back().y) {
+    hull.pop_back();
+  }
+
+  return hull;
+}
+
+bool point_inside(vector<Point> hull, Point P) {
+  int n = hull.size();
+  if (n < 3) return false;
+  
+  auto orientation = [&](const Point& A, const Point& B, const Point& C) -> long long {
+    return (B.x - A.x)*(C.y - A.y) - (B.y - A.y)*(C.x - A.x);
+  };
+  
+  for (int i = 0; i < n; i++) {
+    int next = (i + 1) % n;
+    if (orientation(hull[i], hull[next], P) <= 0) return false;
+  }
+  return true;
+}
+
+double calculate_perimeter(vector<Point> hull) {
+  double perimeter = 0.0;
+  int n = hull.size();
+  for (int i = 0; i < n; i++) {
+    int next = (i + 1) % n;
+    double dx = (double)(hull[i].x - hull[next].x);
+    double dy = (double)(hull[i].y - hull[next].y);
+    perimeter += sqrt(dx * dx + dy * dy);
+  }
+  return perimeter;
+}
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(0);
+  
+  int T;
+  cin >> T;
+  
+  for (int t = 1; t <= T; t++) {
+    int N;
+    cin >> N;
+    
+    vector<Point> stars(N);
+    for (int i = 0; i < N; i++) {
+      cin >> stars[i].x >> stars[i].y;
+    }
+    
+    Point blue_star;
+    cin >> blue_star.x >> blue_star.y;
+    double min_perimeter = 1e18;
+
+    for (int K = 3; K <= min(N, 6); K++) {
+      vector<int> indices(K);
+      for (int i = 0; i < K; i++) indices[i] = i;
+      
+      while (true) {
+        vector<Point> subset(K);
+        for (int i = 0; i < K; i++) subset[i] = stars[indices[i]];
+
+        vector<Point> hull = convex_hull(subset);
+        if (hull.size() >= 3) {
+          if (point_inside(hull, blue_star)) {
+            if (calculate_perimeter(hull) < min_perimeter) {
+              min_perimeter = calculate_perimeter(hull);
+            }
+          }
+        }
+        
+        int i;
+        for (i = K - 1; i >= 0; i--) {
+          if (indices[i] < N - K + i) {
+            indices[i]++;
+            for (int j = i + 1; j < K; j++) indices[j] = indices[j - 1] + 1;
+            break;
+          }
+        }
+        if (i < 0) break;
+      }
+    }
+    
+    if (min_perimeter < 1e18) {
+        cout << "Case #"<< t << ": " << fixed << setprecision(6) << min_perimeter << "\n";
+    }
+    else{
+        cout << "Case #"<< t << ": IMPOSSIBLE\n";
+    }
+  }
+  
+  return 0;
+}
