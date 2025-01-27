@@ -1,0 +1,104 @@
+#include <algorithm>
+#include <cmath>
+#include <iostream>
+#include <vector>
+using namespace std;
+
+struct Point {
+  long long x, y;
+  int index;
+
+  bool operator<(const Point& other) const {
+    if (x == other.x) return y < other.y;
+    return x < other.x;
+  }
+  bool operator==(const Point rhs) {
+    return x == rhs.x && y == rhs.y;
+  }
+};
+
+long long ccw(Point a, Point b, Point c) {
+  return a.x * b.y + b.x * c.y + c.x * a.y - b.x * a.y - c.x * b.y - a.x * c.y;
+}
+
+vector<Point> convex_hull(vector<Point> points) {
+  if (points.size() <= 3) return points;
+  
+  sort(points.begin(), points.end(), [](Point a, Point b) {
+    return a.y < b.y || (a.y == b.y && a.x < b.x);
+  });
+  Point pivot = points[0];
+  sort(points.begin() + 1, points.end(), [pivot](Point a, Point b) {
+    long long cp = ccw(pivot, a, b);
+    return cp > 0 || (cp == 0 && (a.y < b.y || (a.y == b.y && a.x < b.x)));
+  });
+  
+  vector<Point> hull = {points[0], points[1]};
+  for (int i = 2; i < points.size(); i++) {
+    while (hull.size() >= 2 && ccw(hull[hull.size() - 2], hull.back(), points[i]) <= 0) {
+      hull.pop_back();
+    }
+    hull.push_back(points[i]);
+  }
+  
+  if (hull.size() < 3) return {};
+  return hull;
+}
+
+long double polygon_area(const vector<Point> points) {
+  long double area = 0;
+  int n = points.size();
+  for(int i = 0; i < n; i++) {
+    int j = (i + 1) % n;
+    area += (points[i].x * points[j].y) - (points[j].x * points[i].y);
+  }
+  return abs(area) / 2.0;
+}
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  int n;
+  cin >> n;
+  
+  vector<Point> points(n);
+  for (int i = 0; i < n; i++) {
+    cin >> points[i].x >> points[i].y;
+    points[i].index = i;
+  }
+  
+  int height = 1;
+  vector<int> heights(n);
+  while (points.size() >= 3) {
+    vector<Point> hull = convex_hull(points);
+    
+    if (hull.empty() || polygon_area(hull) == 0) {
+      break;
+    }
+    
+    for (auto i : hull) {
+      heights[i.index] = height;
+    }
+    
+    vector<Point> new_points;
+    vector<bool> is_hull(n);
+    for (auto p : hull) {
+      is_hull[p.index] = true;
+    }
+    for (auto p : points) {
+      if (!is_hull[p.index]) {
+        new_points.push_back(p);
+      }
+    }
+    points = move(new_points);
+    
+    height++;
+  }
+  
+  for (int i = 0; i < n; i++) {
+    cout << heights[i] << " ";
+  }
+
+  return 0;
+}
