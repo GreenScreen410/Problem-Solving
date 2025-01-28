@@ -1,0 +1,129 @@
+#include <algorithm>
+#include <cmath>
+#include <iostream>
+#include <vector>
+using namespace std;
+
+struct Point {
+  long long x, y, dx, dy;
+  
+  Point operator + (const Point rhs) {
+    return {x + rhs.x, y + rhs.y};
+  }
+  
+  Point operator - (const Point rhs) {
+    return {x - rhs.x, y - rhs.y};
+  }
+};
+vector<Point> points;
+
+long long ccw(Point a, Point b, Point c) {
+  return a.x * b.y + b.x * c.y + c.x * a.y - b.x * a.y - c.x * b.y - a.x * c.y;
+}
+
+long long distance(Point a, Point b) {
+  long long dx = a.x - b.x;
+  long long dy = a.y - b.y;
+  return dx * dx + dy * dy;
+}
+
+vector<Point> convex_hull(vector<Point> points) {
+  if (points.size() <= 2) return points;
+
+  sort(points.begin(), points.end(), [](Point a, Point b) {
+    return a.y < b.y || (a.y == b.y && a.x < b.x);
+  });
+  Point pivot = points[0];
+  sort(points.begin() + 1, points.end(), [pivot](Point a, Point b) {
+    long long cp = ccw(pivot, a, b);
+    return cp > 0 || (cp == 0 && (a.y < b.y || (a.y == b.y && a.x < b.x)));
+  });
+  
+  vector<Point> hull = {points[0], points[1]};
+  for (int i = 2; i < points.size(); i++) {
+    while (hull.size() >= 2 && ccw(hull[hull.size() - 2], hull.back(), points[i]) <= 0) {
+      hull.pop_back();
+    }
+    hull.push_back(points[i]);
+  }
+  return hull;
+}
+
+long long rotating_calipers(vector<Point> hull) {
+  int n = hull.size();
+  long long max_dist = 0;
+  for (int i = 0, j = 1; i < n; i++) {
+    while (true) {
+      int next_j = (j + 1) % n;
+      long long cross = (hull[next_j].x - hull[i].x) * (hull[j].y - hull[i].y) -
+                        (hull[next_j].y - hull[i].y) * (hull[j].x - hull[i].x);
+      if (cross <= 0) break;
+      j = next_j;
+    }
+    max_dist = max(max_dist, distance(hull[i], hull[j]));
+  }
+  return max_dist;
+}
+
+bool compare_y(Point a, Point b) {
+  if (a.y == b.y) return a.x < b.x;
+  else return a.y < b.y;
+}
+
+bool compare_ccw(Point a, Point b) {
+  long long cp = ccw(points[0], a, b);
+  if (cp == 0) {
+    if (a.y == b.y) return a.x < b.x;
+    return a.y < b.y;
+  }
+  return cp > 0;
+}
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(NULL);
+  
+  int N, T;
+  cin >> N >> T;
+  
+  vector<Point> stars(N);
+  for (int i = 0; i < N; i++) {
+    cin >> stars[i].x >> stars[i].y >> stars[i].dx >> stars[i].dy;
+  }
+  
+  long long start = 0, end = T;
+  while (start + 3 <= end) {
+    long long mid1 = (start + start + end) / 3;
+    long long mid2 = (start + end + end) / 3;
+    
+    vector<Point> mid1_stars = stars;
+    vector<Point> mid2_stars = stars;
+    for (int i = 0; i < N; i++) {
+      mid1_stars[i] = {stars[i].x + (long long)stars[i].dx * mid1, stars[i].y + (long long)stars[i].dy * mid1};
+    }
+    for (int i = 0; i < N; i++) {
+      mid2_stars[i] = {stars[i].x + (long long)stars[i].dx * mid2, stars[i].y + (long long)stars[i].dy * mid2};
+    }
+    
+    if (rotating_calipers(mid1_stars) > rotating_calipers(mid2_stars)) start = mid1;
+    else end = mid2;
+  }
+  
+  long long answer = 1e18;
+  int index = start;
+  for (int i = start; i <= end; i++) {
+    vector<Point> x = stars;
+    for (int j = 0; j < N; j++) {
+      x[j] = {stars[j].x + (long long)stars[j].dx * i, stars[j].y + (long long)stars[j].dy * i};
+    }
+    long long now = rotating_calipers(x);
+    if (answer > now) {
+      answer = now;
+      index = i;
+    }
+  }
+  
+  cout << index << "\n" << answer;
+  
+  return 0;
+}
