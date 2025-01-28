@@ -1,0 +1,105 @@
+#include <algorithm>
+#include <cmath>
+#include <iostream>
+#include <vector>
+using namespace std;
+
+struct Point {
+  long long x, y;
+
+  bool operator<(const Point& other) const {
+    if (x == other.x) return y < other.y;
+    return x < other.x;
+  }
+  Point operator+(const Point& other) const {
+    return {x + other.x, y + other.y};
+  }
+  Point operator-(const Point& other) const {
+    return {x - other.x, y - other.y};
+  }
+  Point operator*(long long t) const {
+    return {t * x, t * y};
+  }
+  long long operator*(const Point& other) const {
+    return x * other.x + y * other.y;
+  }
+  long long operator%(const Point& other) const {
+    return x * other.y - y * other.x;
+  }
+};
+
+long long ccw(Point a, Point b, Point c) {
+  return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+}
+
+void convex_hull(vector<Point>& points) {
+  partial_sort(points.begin(), points.begin() + 1, points.end());
+  sort(points.begin() + 1, points.end(), [&](Point a, Point b) {
+    long long cp = ccw(points[0], a, b);
+    return cp > 0 || (cp == 0 && (a - points[0]) * (a - points[0]) < (b - points[0]) * (b - points[0]));
+  });
+  
+  int n = points.size(), k = 2;
+  for (int i = 2; i < n; i++) {
+    points[k++] = points[i];
+    while (k >= 3 && ccw(points[k-3], points[k-2], points[k-1]) <= 0) {
+      points[k-2] = points[k-1];
+      k--;
+    }
+  }
+  points.resize(k);
+}
+
+bool can_divide(vector<Point> a, vector<Point> b) {
+  convex_hull(a);
+  convex_hull(b);
+  
+  for (int x = 0; x < 2; x++) {
+    int m = a.size(), n = b.size();
+    auto cross = [&](int i, int j) {
+      return (a[(i + 1) % m] - a[i]) % b[j];
+    };
+    int j = 0;
+    for (int k = 1; k < n; k++) {
+      if (cross(0, k) > cross(0, j)) j = k;
+    }
+    for (int i = 0; i < m; i++) {
+      while (cross(i, (j +1) % n) > cross(i, j)) j = (j + 1) % n;
+      if (cross(i, j) <= (a[(i + 1) % m] % a[i])) return true;
+    }
+    swap(a, b);
+  }
+  return false;
+}
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(NULL);
+
+  int n;
+  cin >> n;
+  
+  vector<Point> upleft(n), upright(n), downleft(n), downright(n);
+  long long max_x1 = -1, min_x2 = 1e18;
+  long long max_y1 = -1, min_y2 = 1e18;
+  for (int i = 0; i < n; i++) {
+    cin >> downleft[i].x >> downleft[i].y >> upright[i].x >> upright[i].y;
+    upleft[i] = {downleft[i].x, upright[i].y};
+    downright[i] = {upright[i].x, downleft[i].y};
+    
+    max_x1 = max(max_x1, downleft[i].x);
+    min_x2 = min(min_x2, upright[i].x);
+    max_y1 = max(max_y1, downleft[i].y);
+    min_y2 = min(min_y2, upright[i].y);
+  }
+
+  if (max_x1 <= min_x2 || max_y1 <= min_y2) {
+    cout << "possible";
+    return 0;
+  }
+
+  bool res = can_divide(upleft, downright) || can_divide(upright, downleft);
+  cout << (res ? "possible" : "impossible");
+
+  return 0;
+}
