@@ -4,7 +4,7 @@
 
 ### 성능 요약
 
-메모리: 2092 KB, 시간: 0 ms
+메모리: 9040 KB, 시간: 484 ms
 
 ### 분류
 
@@ -12,7 +12,7 @@
 
 ### 제출 일자
 
-2025년 1월 28일 23:38:15
+2025년 1월 28일 23:49:28
 
 ### 문제 설명
 
@@ -32,11 +32,11 @@
 
 <p>즉, 별 A의 속도는 [2, 0], 별 B의 속도는 [-1, 0], 별 C의 속도는 [1, 1]이다. 따라서 처음 사진을 찍은 날부터 이틀 뒤(촬영일 2)에 찍은 사진에서는 세 별의 좌표가 (4, 0), (3, 0), (5, -1)이 될 것이다.</p>
 
-<p>나정보는 좌표 상에서 가장 멀리 떨어진 두 별의 거리를 매일 기록하고 있다. 두 별의 x좌표의 차이가 p이고 y좌표의 차이가 q인 두 별의 거리는 \(\sqrt{p^2+q^2}\) 으로 정의한다. 예를 들어, 촬영일 0의 사진에서 가장 멀리 떨어진 두 별은 별 A와 별 B이고 그 때 거리는 5이며, 촬영일 1의 사진에서 가장 멀리 떨어진 두 별은 별 A와 별 C로 거리는 \(\sqrt{8}\) 이다.</p>
+<p>나정보는 좌표 상에서 가장 멀리 떨어진 두 별의 거리를 매일 기록하고 있다. 두 별의 x좌표의 차이가 p이고 y좌표의 차이가 q인 두 별의 거리는 <mjx-container class="MathJax" jax="CHTML" style="font-size: 109%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-msqrt><mjx-sqrt><mjx-surd><mjx-mo class="mjx-sop"><mjx-c class="mjx-c221A TEX-S1"></mjx-c></mjx-mo></mjx-surd><mjx-box style="padding-top: 0.131em;"><mjx-msup><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45D TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: 0.289em;"><mjx-mn class="mjx-n" size="s"><mjx-c class="mjx-c32"></mjx-c></mjx-mn></mjx-script></mjx-msup><mjx-mo class="mjx-n" space="3"><mjx-c class="mjx-c2B"></mjx-c></mjx-mo><mjx-msup space="3"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45E TEX-I"></mjx-c></mjx-mi><mjx-script style="vertical-align: 0.289em; margin-left: 0.051em;"><mjx-mn class="mjx-n" size="s"><mjx-c class="mjx-c32"></mjx-c></mjx-mn></mjx-script></mjx-msup></mjx-box></mjx-sqrt></mjx-msqrt></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><msqrt><msup><mi>p</mi><mn>2</mn></msup><mo>+</mo><msup><mi>q</mi><mn>2</mn></msup></msqrt></math></mjx-assistive-mml><span aria-hidden="true" class="no-mathjax mjx-copytext">\(\sqrt{p^2+q^2}\)</span></mjx-container> 으로 정의한다. 예를 들어, 촬영일 0의 사진에서 가장 멀리 떨어진 두 별은 별 A와 별 B이고 그 때 거리는 5이며, 촬영일 1의 사진에서 가장 멀리 떨어진 두 별은 별 A와 별 C로 거리는 <mjx-container class="MathJax" jax="CHTML" style="font-size: 109%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-msqrt><mjx-sqrt><mjx-surd><mjx-mo class="mjx-n"><mjx-c class="mjx-c221A"></mjx-c></mjx-mo></mjx-surd><mjx-box style="padding-top: 0.163em;"><mjx-mn class="mjx-n"><mjx-c class="mjx-c38"></mjx-c></mjx-mn></mjx-box></mjx-sqrt></mjx-msqrt></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><msqrt><mn>8</mn></msqrt></math></mjx-assistive-mml><span aria-hidden="true" class="no-mathjax mjx-copytext">\(\sqrt{8}\)</span></mjx-container> 이다.</p>
 
 <p>별들의 초기 좌표와 속도, 마지막 촬영일이 주어졌을 때, 가장 멀리 떨어진 두 별의 거리가 최소인 촬영일과 그 때 거리의 제곱값을 구하는 프로그램을 작성하시오. 단, 이런 촬영일이 여러 날인 경우에는 그 중에서 가장 처음 찍은 촬영일을 구하시오.</p>
 
-<p>앞의 예에서 마지막 촬영일이 3이라면, 각 촬영일의 최대 거리가 5(촬영일 0), \(\sqrt{8}\) (촬영일 1), \(\sqrt{5}\) (촬영일 2), 4(촬영일 3)가 되어 그 중 \(\sqrt{5}\)가 최소이므로 촬영일 2와 \(\sqrt{5}\) 의 제곱값인 5를 구하면 된다.</p>
+<p>앞의 예에서 마지막 촬영일이 3이라면, 각 촬영일의 최대 거리가 5(촬영일 0), <mjx-container class="MathJax" jax="CHTML" style="font-size: 109%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-msqrt><mjx-sqrt><mjx-surd><mjx-mo class="mjx-n"><mjx-c class="mjx-c221A"></mjx-c></mjx-mo></mjx-surd><mjx-box style="padding-top: 0.163em;"><mjx-mn class="mjx-n"><mjx-c class="mjx-c38"></mjx-c></mjx-mn></mjx-box></mjx-sqrt></mjx-msqrt></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><msqrt><mn>8</mn></msqrt></math></mjx-assistive-mml><span aria-hidden="true" class="no-mathjax mjx-copytext">\(\sqrt{8}\)</span></mjx-container> (촬영일 1), <mjx-container class="MathJax" jax="CHTML" style="font-size: 109%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-msqrt><mjx-sqrt><mjx-surd><mjx-mo class="mjx-n"><mjx-c class="mjx-c221A"></mjx-c></mjx-mo></mjx-surd><mjx-box style="padding-top: 0.163em;"><mjx-mn class="mjx-n"><mjx-c class="mjx-c35"></mjx-c></mjx-mn></mjx-box></mjx-sqrt></mjx-msqrt></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><msqrt><mn>5</mn></msqrt></math></mjx-assistive-mml><span aria-hidden="true" class="no-mathjax mjx-copytext">\(\sqrt{5}\)</span></mjx-container> (촬영일 2), 4(촬영일 3)가 되어 그 중 <mjx-container class="MathJax" jax="CHTML" style="font-size: 109%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-msqrt><mjx-sqrt><mjx-surd><mjx-mo class="mjx-n"><mjx-c class="mjx-c221A"></mjx-c></mjx-mo></mjx-surd><mjx-box style="padding-top: 0.163em;"><mjx-mn class="mjx-n"><mjx-c class="mjx-c35"></mjx-c></mjx-mn></mjx-box></mjx-sqrt></mjx-msqrt></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><msqrt><mn>5</mn></msqrt></math></mjx-assistive-mml><span aria-hidden="true" class="no-mathjax mjx-copytext">\(\sqrt{5}\)</span></mjx-container>가 최소이므로 촬영일 2와 <mjx-container class="MathJax" jax="CHTML" style="font-size: 109%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-msqrt><mjx-sqrt><mjx-surd><mjx-mo class="mjx-n"><mjx-c class="mjx-c221A"></mjx-c></mjx-mo></mjx-surd><mjx-box style="padding-top: 0.163em;"><mjx-mn class="mjx-n"><mjx-c class="mjx-c35"></mjx-c></mjx-mn></mjx-box></mjx-sqrt></mjx-msqrt></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><msqrt><mn>5</mn></msqrt></math></mjx-assistive-mml><span aria-hidden="true" class="no-mathjax mjx-copytext">\(\sqrt{5}\)</span></mjx-container> 의 제곱값인 5를 구하면 된다.</p>
 
 ### 입력 
 

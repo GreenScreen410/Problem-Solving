@@ -7,18 +7,18 @@ using namespace std;
 struct Point {
   long long x, y, dx, dy;
   
-  Point operator + (const Point rhs) {
+  Point operator + (const Point rhs) const {
     return {x + rhs.x, y + rhs.y};
   }
   
-  Point operator - (const Point rhs) {
+  Point operator - (const Point rhs) const {
     return {x - rhs.x, y - rhs.y};
   }
 };
 vector<Point> points;
 
 long long ccw(Point a, Point b, Point c) {
-  return a.x * b.y + b.x * c.y + c.x * a.y - b.x * a.y - c.x * b.y - a.x * c.y;
+  return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
 }
 
 long long distance(Point a, Point b) {
@@ -36,7 +36,10 @@ vector<Point> convex_hull(vector<Point> points) {
   Point pivot = points[0];
   sort(points.begin() + 1, points.end(), [pivot](Point a, Point b) {
     long long cp = ccw(pivot, a, b);
-    return cp > 0 || (cp == 0 && (a.y < b.y || (a.y == b.y && a.x < b.x)));
+    if (cp == 0) {
+      return distance(pivot, a) < distance(pivot, b);
+    }
+    return cp > 0;
   });
   
   vector<Point> hull = {points[0], points[1]};
@@ -51,32 +54,30 @@ vector<Point> convex_hull(vector<Point> points) {
 
 long long rotating_calipers(vector<Point> hull) {
   int n = hull.size();
+  if (n == 1) return 0;
+  if (n == 2) return distance(hull[0], hull[1]);
+  
   long long max_dist = 0;
-  for (int i = 0, j = 1; i < n; i++) {
+  int j = 1;
+  
+  for (int i = 0; i < n; i++) {
+    int next_i = (i + 1) % n;
     while (true) {
       int next_j = (j + 1) % n;
-      long long cross = (hull[next_j].x - hull[i].x) * (hull[j].y - hull[i].y) -
-                        (hull[next_j].y - hull[i].y) * (hull[j].x - hull[i].x);
-      if (cross <= 0) break;
-      j = next_j;
+      long long cp_next = ccw(hull[i], hull[next_i], hull[next_j]);
+      long long cp_current = ccw(hull[i], hull[next_i], hull[j]);
+      if (cp_next > cp_current) {
+        j = next_j;
+      } else {
+        break;
+      }
     }
     max_dist = max(max_dist, distance(hull[i], hull[j]));
+    max_dist = max(max_dist, distance(hull[next_i], hull[j]));
+    max_dist = max(max_dist, distance(hull[i], hull[(j+1)%n]));
+    max_dist = max(max_dist, distance(hull[next_i], hull[(j+1)%n]));
   }
   return max_dist;
-}
-
-bool compare_y(Point a, Point b) {
-  if (a.y == b.y) return a.x < b.x;
-  else return a.y < b.y;
-}
-
-bool compare_ccw(Point a, Point b) {
-  long long cp = ccw(points[0], a, b);
-  if (cp == 0) {
-    if (a.y == b.y) return a.x < b.x;
-    return a.y < b.y;
-  }
-  return cp > 0;
 }
 
 int main() {
@@ -96,26 +97,35 @@ int main() {
     long long mid1 = (start + start + end) / 3;
     long long mid2 = (start + end + end) / 3;
     
-    vector<Point> mid1_stars = stars;
-    vector<Point> mid2_stars = stars;
+    vector<Point> mid1_stars(N), mid2_stars(N);
     for (int i = 0; i < N; i++) {
-      mid1_stars[i] = {stars[i].x + (long long)stars[i].dx * mid1, stars[i].y + (long long)stars[i].dy * mid1};
+      mid1_stars[i] = {stars[i].x + stars[i].dx * mid1, stars[i].y + stars[i].dy * mid1};
     }
     for (int i = 0; i < N; i++) {
-      mid2_stars[i] = {stars[i].x + (long long)stars[i].dx * mid2, stars[i].y + (long long)stars[i].dy * mid2};
+      mid2_stars[i] = {stars[i].x + stars[i].dx * mid2, stars[i].y + stars[i].dy * mid2};
     }
     
-    if (rotating_calipers(mid1_stars) > rotating_calipers(mid2_stars)) start = mid1;
-    else end = mid2;
+    mid1_stars = convex_hull(mid1_stars);
+    mid2_stars = convex_hull(mid2_stars);
+    
+    long long dist1 = rotating_calipers(mid1_stars);
+    long long dist2 = rotating_calipers(mid2_stars);
+    
+    if (dist1 > dist2) {
+      start = mid1;
+    } else {
+      end = mid2;
+    }
   }
   
   long long answer = 1e18;
   int index = start;
   for (int i = start; i <= end; i++) {
-    vector<Point> x = stars;
+    vector<Point> x(N);
     for (int j = 0; j < N; j++) {
-      x[j] = {stars[j].x + (long long)stars[j].dx * i, stars[j].y + (long long)stars[j].dy * i};
+      x[j] = {stars[j].x + stars[j].dx * i, stars[j].y + stars[j].dy * i};
     }
+    x = convex_hull(x);
     long long now = rotating_calipers(x);
     if (answer > now) {
       answer = now;
