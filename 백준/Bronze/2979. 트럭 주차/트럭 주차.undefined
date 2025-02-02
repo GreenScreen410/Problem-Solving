@@ -1,0 +1,29 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+int main() {
+  int A, B, C;
+  cin >> A >> B >> C;
+  
+  int cost = 0;
+  vector<int> status(100);
+  for (int i = 0; i < 3; i++) {
+    int start, end;
+    cin >> start >> end;
+    
+    for (int j = start - 1; j < end - 1; j++) {
+      status[j]++;
+    }
+  }
+  
+  for (int i = 0; i < 100; i++) {
+    if (status[i] == 1) cost += A;
+    else if (status[i] == 2) cost += 2 * B;
+    else if (status[i] == 3) cost += 3 * C;
+  }
+  
+  cout << cost;
+  
+  return 0;
+}
