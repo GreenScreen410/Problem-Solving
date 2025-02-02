@@ -1,0 +1,40 @@
+#include <iostream>
+using namespace std;
+
+int main() {
+  int X;
+  cin >> X;
+  
+  int is_shoot;
+  cin >> is_shoot;
+  
+  int is_violation;
+  cin >> is_violation;
+  
+  int score = 0;
+  if (is_shoot == 1) {
+    score += X;
+    
+    if (is_violation == 1) {
+      int free_throw;
+      cin >> free_throw;
+      if (free_throw == 1) {
+        score += 1;
+      }
+    }
+  }
+  
+  else if (is_shoot == 0 && is_violation == 1) {
+    for (int i = 0; i < X; i++) {
+      int free_throw;
+      cin >> free_throw;
+      if (free_throw == 1) {
+        score += 1;
+      }
+    }
+  }
+  
+  cout << score;
+  
+  return 0;
+}
