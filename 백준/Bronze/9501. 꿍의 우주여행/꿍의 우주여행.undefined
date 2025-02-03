@@ -1,0 +1,24 @@
+#include <iostream>
+using namespace std;
+
+int main()  {
+  int T;
+  cin >> T;
+  
+  while (T--) {
+    double N, D;
+    cin >> N >> D;
+    
+    int count = 0;
+    while (N--) {
+      int v, f, c;
+      cin >> v >> f >> c;
+      
+      if (f >= D / v * c) count++;
+    }
+    
+    cout << count << "\n";
+  }
+  
+  return 0;
+}
