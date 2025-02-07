@@ -1,0 +1,14 @@
+#include <iostream>
+using namespace std;
+
+int main()  {
+  int X, Y;
+  cin >> X >> Y;
+  
+  int A = X - (Y / 2 - X);
+  int B = Y / 2 - X;
+  
+  cout << A << " " << B;
+
+  return 0;
+}
