@@ -1,0 +1,25 @@
+#include <algorithm>
+#include <iostream>
+#include <vector>
+using namespace std;
+
+int main()  {
+  int N, F;
+  cin >> N >> F;
+  
+  vector<double> cars(N);
+  for (int i = 0; i < N; i++) {
+    double x, v;
+    cin >> x >> v;
+    cars[i] = (F - x) / v;
+  }
+
+  for (int i = 1; i <= N; i++) {
+    if (cars[i - 1] == *min_element(cars.begin(), cars.end())) {
+      cout << i;
+      break;
+    }
+  }
+  
+  return 0;
+}
