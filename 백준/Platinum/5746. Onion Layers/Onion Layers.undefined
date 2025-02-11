@@ -1,0 +1,99 @@
+#include <algorithm>
+#include <iostream>
+#include <vector>
+using namespace std;
+
+struct Point {
+  long long x, y;
+  
+  bool operator<(const Point& other) const {
+    if (x == other.x) return y < other.y;
+    return x < other.x;
+  }
+  bool operator==(const Point& other) const {
+    return x == other.x && y == other.y;
+  }
+};
+
+long long ccw(Point a, Point b, Point c) {
+  return (a.x * b.y + b.x * c.y + c.x * a.y) - (a.y * b.x + b.y * c.x + c.y * a.x);
+}
+
+vector<Point> convex_hull(vector<Point> points) {
+  if (points.empty()) return {};
+
+  sort(points.begin(), points.end(), [](Point a, Point b) {
+    return make_pair(a.y, a.x) < make_pair(b.y, b.x);
+  });
+  
+  Point pivot = points[0];
+  sort(points.begin() + 1, points.end(), [pivot](Point a, Point b) {
+    long long val = ccw(pivot, a, b);
+    if (val != 0) return val > 0;
+    return a.y == b.y ? a.x < b.x : a.y < b.y;
+  });
+
+  vector<Point> hull;
+  for (auto &p : points) {
+    while (hull.size() >= 2 && ccw(hull[hull.size()-2], hull.back(), p) <= 0) {
+      hull.pop_back();
+    }
+    hull.push_back(p);
+  }
+  return hull;
+}
+
+int main() {
+  while (true) {
+    int N;
+    cin >> N;
+    if (N == 0) break;
+
+    vector<Point> points(N);
+    for (auto &p : points) {
+      cin >> p.x >> p.y;
+    }
+    
+    vector<vector<Point>> layers;
+    vector<Point> remaining = points;
+    
+    while (!remaining.empty()) {
+      vector<Point> hull = convex_hull(remaining);
+      if (hull.size() < 3) break;
+      
+      vector<Point> new_remaining;
+      for (Point p : remaining) {
+        bool on_boundary = false;
+        
+        if (find(hull.begin(), hull.end(), p) != hull.end()) {
+          on_boundary = true;
+        } else {
+          for(int i = 0; i < hull.size(); ++i) {
+            Point a = hull[i];
+            Point b = hull[(i + 1) % hull.size()];
+            
+            if (ccw(a, p, b) == 0
+              && min(a.x, b.x) <= p.x && p.x <= max(a.x, b.x)
+              && min(a.y, b.y) <= p.y && p.y <= max(a.y, b.y)) {
+              on_boundary = true;
+              break;
+            }
+          }
+        }
+        
+        if (!on_boundary) new_remaining.push_back(p);
+      }
+      
+      layers.push_back(hull);
+      remaining = new_remaining;
+    }
+    
+    if (layers.size() % 2 == 1) {
+      cout << "Take this onion to the lab!\n";
+    } else {
+      cout << "Do not take this onion to the lab!\n";
+    }
+  }
+  
+  return 0;
+}
