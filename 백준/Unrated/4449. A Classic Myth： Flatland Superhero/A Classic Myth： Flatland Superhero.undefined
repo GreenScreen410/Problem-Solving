@@ -1,0 +1,111 @@
+#include <algorithm>
+#include <cmath>
+#include <cfloat>
+#include <climits>
+#include <iomanip>
+#include <iostream>
+#include <limits>
+#include <vector>
+using namespace std;
+
+const long double EPS = 1e-9;
+
+struct Point {
+  long double x, y;
+
+  Point operator+(const Point &rhs) const {
+    return {x + rhs.x, y + rhs.y};
+  }
+  Point operator-(const Point &rhs) const {
+    return {x - rhs.x, y - rhs.y};
+  }
+};
+
+long double ccw(Point a, Point b, Point c) {
+  return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+}
+
+long double product(Point a, Point b, int is_dot) {
+  return is_dot ? a.x * b.x + a.y * b.y : a.x * b.y - a.y * b.x;
+}
+
+long double euclidean_distance(Point a, Point b) {
+  return sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
+}
+
+long double DistancePointLine(Point a, Point b, Point p) {
+    return fabsl(product(b - a, p - a, 0)) / euclidean_distance(a, b);
+}
+
+vector<Point> convex_hull(vector<Point>& points) {
+  sort(points.begin(), points.end(), [](Point a, Point b) {
+    return a.y < b.y || (a.y == b.y && a.x < b.x);
+  });
+  Point pivot = points[0];
+  sort(points.begin() + 1, points.end(), [pivot](Point a, Point b) {
+    long double cp = ccw(pivot, a, b);
+    return cp > 0 || (cp == 0 && (a.y < b.y || (a.y == b.y && a.x < b.x)));
+  });
+
+  vector<Point> hull = {points[0], points[1]};
+  for (int i = 2; i < points.size(); i++) {
+    while (hull.size() >= 2 && ccw(hull[hull.size() - 2], hull.back(), points[i]) <= 0) {
+      hull.pop_back();
+    }
+    hull.push_back(points[i]);
+  }
+  return hull;
+}
+
+long double parallelogram_area(vector<Point>& points) {
+  int n = points.size();
+  vector<long double> heights(n);
+  
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < n; j++) {
+      heights[i] = max(heights[i], DistancePointLine(points[i], points[(i + 1) % n], points[j]));
+    }
+  }
+  
+  long double min_area = numeric_limits<long double>::infinity();
+  for (int i = 0; i < n; i++) {
+    for (int j = i + 1; j < n; j++) {
+      Point e1 = points[(i + 1) % n] - points[i];
+      Point e2 = points[(j + 1) % n] - points[j];
+      long double norm_e1 = sqrt(product(e1, e1, 1));
+      long double norm_e2 = sqrt(product(e2, e2, 1));
+      long double cos_theta = product(e1, e2, 1) / (norm_e1 * norm_e2);
+      cos_theta = max(-1.0L, min(1.0L, cos_theta));
+      long double sin_theta = sqrt(max(0.0L, 1.0L - cos_theta * cos_theta));
+      if (sin_theta <= EPS) continue;
+      long double area = heights[i] * heights[j] / sin_theta;
+      min_area = min(min_area, area);
+    }
+  }
+  return min_area;
+}
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+  
+  int s;
+  cin >> s;
+  
+  for (int i = 1; i <= s; i++) {
+    int n;
+    cin >> n;
+  
+    vector<Point> points(n);
+    for (int i = 0; i < n; i++) {
+      cin >> points[i].x >> points[i].y;
+    }
+
+    vector<Point> hull = convex_hull(points);
+  
+    cout << fixed << setprecision(4);
+    cout << "Swarm " << i << " Parallelogram Area: " << parallelogram_area(hull) << "\n";
+  }
+  
+  return 0;
+}
