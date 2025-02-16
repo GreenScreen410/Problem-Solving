@@ -1,0 +1,70 @@
+#include <cmath>
+#include <iostream>
+#include <iomanip>
+#include <vector>
+#include <tuple>
+using namespace std;
+
+vector<long double> a(3), b(3), c(3);
+
+long double distance(long double x1, long double y1, long double z1, long double x2, long double y2, long double z2) {
+  return sqrtl((x1 - x2)*(x1 - x2) + (y1 - y2)*(y1 - y2) + (z1 - z2)*(z1 - z2));
+}
+
+tuple<long double, long double, long double> geometric_median(const vector<long double>& x, const vector<long double>& y, const vector<long double>& z) {
+  int n = x.size();
+  long double cx = 0, cy = 0, cz = 0;
+  for (int i = 0; i < n; i++) {
+      cx += x[i];
+      cy += y[i];
+      cz += z[i];
+  }
+  cx /= n;
+  cy /= n;
+  cz /= n;
+
+  const int MAX_ITER = 1000;
+  const long double EPS = 1e-15;
+
+  for (int iter = 0; iter < MAX_ITER; iter++) {
+    long double numerator_x = 0, numerator_y = 0, numerator_z = 0, denominator = 0;
+    for (int i = 0; i < n; i++) {
+      long double dist = distance(cx, cy, cz, x[i], y[i], z[i]);
+      dist = max(dist, (long double)1e-30);
+      long double w = 1.0L / dist;
+      numerator_x += w * x[i];
+      numerator_y += w * y[i];
+      numerator_z += w * z[i];
+      denominator += w;
+    }
+    if (denominator < 1e-30) break;
+    
+    long double new_cx = numerator_x / denominator;
+    long double new_cy = numerator_y / denominator;
+    long double new_cz = numerator_z / denominator;
+    if (distance(cx, cy, cz, new_cx, new_cy, new_cz) < EPS) break;
+    
+    cx = new_cx;
+    cy = new_cy;
+    cz = new_cz;
+  }
+  return {cx, cy, cz};
+}
+
+int main() {
+  for (int i = 0; i < 3; i++) {
+    cin >> a[i] >> b[i] >> c[i];
+  }
+
+  auto [x, y, z] = geometric_median(a, b, c);
+
+  long double total_distance = 0;
+  for (int i = 0; i < 3; i++) {
+    total_distance += distance(x, y, z, a[i], b[i], c[i]);
+  }
+
+  cout << fixed << setprecision(6);
+  cout << total_distance << endl;
+
+  return 0;
+}
