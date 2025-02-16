@@ -1,0 +1,47 @@
+#include <algorithm>
+#include <iostream>
+#include <vector>
+using namespace std;
+
+struct Point {
+  long long x, y;
+};
+
+long long ccw(Point a, Point b, Point c) {
+  return (a.x * b.y + b.x * c.y + c.x * a.y) - (b.x * a.y + c.x * b.y + a.x * c.y);
+}
+
+vector<Point> convex_hull(vector<Point> points) {
+  sort(points.begin(), points.end(), [](Point a, Point b) {
+    return make_pair(a.x, a.y) < make_pair(b.x, b.y);
+  });
+
+  vector<Point> hull;
+  for (auto p : points) {
+    while (hull.size() >= 2 && ccw(hull[hull.size()-2], hull.back(), p) <= 0) hull.pop_back();
+    hull.push_back(p);
+  }
+
+  int lower_hull_size = hull.size();
+  for (auto it = points.rbegin() + 1; it != points.rend(); it++) {
+    while (hull.size() > lower_hull_size && ccw(hull[hull.size() - 2], hull.back(), *it) <= 0) hull.pop_back();
+    hull.push_back(*it);
+  }
+  hull.pop_back();
+
+  return hull;
+}
+
+int main() {
+  int N;
+  cin >> N;
+  
+  vector<Point> points(N);
+  for (int i = 0; i < N; i++) {
+    cin >> points[i].x >> points[i].y;
+  }
+  
+  cout << convex_hull(points).size() << "\n";
+  
+  return 0;
+}
