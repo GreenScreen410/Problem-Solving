@@ -1,0 +1,97 @@
+#include <algorithm>
+#include <cmath>
+#include <cfloat>
+#include <climits>
+#include <iomanip>
+#include <iostream>
+#include <limits>
+#include <vector>
+using namespace std;
+
+const long double EPS = 1e-9;
+
+struct Point {
+  long double x, y;
+
+  Point operator+(const Point &rhs) const {
+    return {x + rhs.x, y + rhs.y};
+  }
+  Point operator-(const Point &rhs) const {
+    return {x - rhs.x, y - rhs.y};
+  }
+};
+
+long double ccw(Point a, Point b, Point c) {
+  return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+}
+
+long double product(Point a, Point b, int is_dot) {
+  return is_dot ? a.x * b.x + a.y * b.y : a.x * b.y - a.y * b.x;
+}
+
+long double euclidean_distance(Point a, Point b) {
+  return sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
+}
+
+long double point_line_distance(Point a, Point b, Point p) {
+    return fabsl(product(b - a, p - a, 0)) / euclidean_distance(a, b);
+}
+
+vector<Point> convex_hull(vector<Point>& points) {
+  sort(points.begin(), points.end(), [](Point a, Point b) {
+    return a.y < b.y || (a.y == b.y && a.x < b.x);
+  });
+  if (points.empty()) return {};
+  Point pivot = points[0];
+  sort(points.begin() + 1, points.end(), [pivot](Point a, Point b) {
+    long double cp = ccw(pivot, a, b);
+    return cp > 0 || (cp == 0 && (a.y < b.y || (a.y == b.y && a.x < b.x)));
+  });
+
+  vector<Point> hull;
+  for (auto &p : points) {
+    while (hull.size() >= 2 && ccw(hull[hull.size() - 2], hull.back(), p) <= 0) {
+      hull.pop_back();
+    }
+    hull.push_back(p);
+  }
+  return hull;
+}
+
+long double compute_min_width(vector<Point>& hull) {
+  int n = hull.size();
+  if (n <= 2) return 0.0L;
+  
+  long double min_width = numeric_limits<long double>::max();
+  for (int i = 0; i < n; ++i) {
+    Point a = hull[i];
+    Point b = hull[(i + 1) % n];
+    long double max_dist = 0.0L;
+    for (Point& p : hull) {
+      long double dist = point_line_distance(a, b, p);
+      if (dist > max_dist) max_dist = dist;
+    }
+    if (max_dist < min_width) min_width = max_dist;
+  }
+  return min_width;
+}
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+  
+  int n;
+  cin >> n;
+  
+  vector<Point> points(n);
+  for (int i = 0; i < n; i++) {
+    cin >> points[i].x >> points[i].y;
+  }
+  
+  vector<Point> hull = convex_hull(points);
+  
+  long double width = compute_min_width(hull);
+  cout << (long long)(width * width) << "\n";
+  
+  return 0;
+}
