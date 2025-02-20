@@ -1,0 +1,23 @@
+#include <algorithm>
+#include <iostream>
+#include <vector>
+using namespace std;
+
+int main() {
+  int N, Q;
+  cin >> N >> Q;
+  
+  vector<int> balloons(N);
+  while (Q--) {
+    int L, I;
+    cin >> L >> I;
+    
+    for (int i = L - 1; i < N; i += I) {
+      balloons[i] = 1;
+    }
+  }
+  
+  cout << count(balloons.begin(), balloons.end(), 0);
+  
+  return 0;
+}
