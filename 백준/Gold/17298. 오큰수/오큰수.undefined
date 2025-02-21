@@ -1,0 +1,31 @@
+#include <iostream>
+#include <vector>
+#include <stack>
+using namespace std;
+
+int main() {
+  int N;
+  cin >> N;
+  
+  vector<int> A(N);
+  for (int &i: A) {
+    cin >> i;
+  }
+  
+  stack<int> s;
+  vector<int> result(N);
+  for (int i = N - 1; i >= 0; i--) {
+    while (!s.empty() && s.top() <= A[i]) s.pop();
+    
+    if (s.empty()) result[i] = -1;
+    else result[i] = s.top();
+    
+    s.push(A[i]);
+  }
+  
+  for (int i : result) {
+    cout << i << " ";
+  }
+  
+  return 0;
+}
