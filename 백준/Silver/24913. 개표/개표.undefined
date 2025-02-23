@@ -1,0 +1,41 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+int main()  {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+  
+  long long N, Q;
+  cin >> N >> Q;
+  
+  long long total = 0, largest = 0;
+  vector<long long> votes(N + 2);
+  while (Q--) {
+    int q;
+    cin >> q;
+    
+    if (q == 1) {
+      int x, p;
+      cin >> x >> p;
+      
+      votes[p] += x;
+      
+      if (p != N + 1) {
+        total += x;
+        largest = max(largest, votes[p]);
+      }
+    } else {
+      int x, y;
+      cin >> x >> y;
+      
+      if (votes[N + 1] + x > largest && (votes[N + 1] + x - 1) * N >= total + y) {
+        cout << "YES\n";
+      } else {
+        cout << "NO\n";
+      }
+    }
+  }
+  
+  return 0;
+}
