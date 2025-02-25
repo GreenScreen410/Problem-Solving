@@ -1,0 +1,32 @@
+#include <iostream>
+using namespace std;
+
+int main() {
+  int N;
+  cin >> N;
+  
+  int odd = 0, even = 0, answer = 0;
+  while (N--) {
+    int cow;
+    cin >> cow;
+    cow % 2 ? odd++ : even++;
+  }
+  
+  while (true) {
+    if (even > 0) even--;
+    else if (odd >= 2) odd -= 2;
+    else break;
+    
+    answer ++;
+    
+    if (odd > 0) odd--;
+    else break;
+    
+    answer++;
+  }
+  
+  if (odd > 0) answer--;
+  cout << answer;
+  
+  return 0;
+}
