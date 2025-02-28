@@ -1,0 +1,75 @@
+// need refactor
+
+#include <climits>
+#include <cmath>
+#include <iostream>
+#include <vector>
+using namespace std;
+
+template <typename T>
+class SegmentTree {
+private:
+  vector<T> tree, arr;
+  int n;
+
+  int left(int node) { return 2 * node + 1; }
+  int right(int node) { return 2 * node + 2; }
+  int mid(int l, int r) { return l + (r - l) / 2; }
+
+  void build(int node, int l, int r) {
+    if (l == r) tree[node] = arr[l];
+    else {
+      int m = mid(l, r);
+      build(left(node), l, m);
+      build(right(node), m + 1, r);
+      tree[node] = tree[left(node)] + tree[right(node)];
+    }
+  }
+
+  void update(int node, int l, int r, int index, T value) {
+    if (l == r) tree[node] = arr[index] = value;
+    else {
+      int m = mid(l, r);
+      if (index <= m) update(left(node), l, m, index, value);
+      else update(right(node), m + 1, r, index, value);
+      tree[node] = tree[left(node)] + tree[right(node)];
+    }
+  }
+
+  T query(int node, int l, int r, int ql, int qr) {
+    if (qr < l || r < ql) return 0;
+    if (ql <= l && r <= qr) return tree[node];
+    int m = mid(l, r);
+    return query(left(node), l, m, ql, qr) + query(right(node), m + 1, r, ql, qr);
+  }
+
+public:
+  SegmentTree(const vector<T>& a) : arr(a), n(a.size()) {
+    tree.resize(4 * n);
+    build(0, 0, n - 1);
+  }
+
+  void update(int index, T value) { update(0, 0, n - 1, index, value); }
+  T query(int l, int r) { return query(0, 0, n - 1, l, r); }
+};
+
+int main() {
+  int N, M, K;
+  cin >> N >> M >> K;
+
+  vector<long long> A(N);
+  for (auto& i : A) {
+    cin >> i;
+  }
+
+  SegmentTree<long long> st(A);
+  while (M + K--) {
+    long long a, b, c;
+    cin >> a >> b >> c;
+
+    if (a == 1) st.update(b - 1, c);
+    else cout << st.query(b - 1, c - 1) << "\n";
+  }
+
+  return 0;
+}
