@@ -1,0 +1,32 @@
+#include <algorithm>
+#include <iostream>
+#include <vector>
+using namespace std;
+
+int main()  {
+  int N;
+  cin >> N;
+  
+  vector<string> v;
+  for (int i = 0; i <= N; i++) {
+    for (int j = N; j >= 1; j--) {
+      if (i > j) continue;
+      int gcd = __gcd(i, j);
+      v.push_back(to_string(i / gcd) + "/" + to_string(j / gcd));
+    }
+  }
+  
+  sort(v.begin(), v.end(), [](string& a, string& b) {
+    double x = stod(a.substr(0, a.find('/'))) / stod(a.substr(a.find('/') + 1));
+    double y = stod(b.substr(0, b.find('/'))) / stod(b.substr(b.find('/') + 1));
+    return x < y;
+  });
+  v.erase(unique(v.begin(), v.end()), v.end());
+  
+  cout << v.size() << "\n";
+  for (auto& i : v) {
+    cout << i << "\n";
+  }
+  
+  return 0;
+}
