@@ -1,0 +1,44 @@
+#include <cmath>
+#include <numeric>
+#include <iostream>
+#include <vector>
+using namespace std;
+
+int main() {
+  int T;
+  cin >> T;
+  
+  while (T--) {
+    int n;
+    cin >> n;
+    
+    vector<int> a(n);
+    for (int& i : a) {
+      cin >> i;
+    }
+    a.push_back(a[0]);
+    
+    int count = 0;
+    while (true) {
+      if (count > 1000) {
+        cout << "LOOP\n";
+        break;
+      }
+      
+      if (accumulate(a.begin(), a.end() - 1, 0) == 0) {
+        cout << "ZERO\n";
+        break;
+      }
+      a.pop_back();
+      
+      a.push_back(a[0]);
+      for (int i = 0; i < n; i++) {
+        a[i] = abs(a[i] - a[i + 1]);
+      }
+      
+      count++;
+    }
+  }
+  
+  return 0;
+}
