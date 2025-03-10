@@ -27,9 +27,9 @@ int main() {
   }
   
   while (m--) {
-    int a, b, c;
+    long long a, b, c;
     cin >> a >> b >> c;
-    graph[a][b] = min(graph[a][b], (long long)c);
+    graph[a][b] = min(graph[a][b], c);
   }
   
   auto result = floyd_warshall(graph);
