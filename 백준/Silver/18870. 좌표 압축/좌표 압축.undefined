@@ -1,0 +1,24 @@
+#include <algorithm>
+#include <iostream>
+#include <vector>
+using namespace std;
+
+int main() {
+  int N;
+  cin >> N;
+  
+  vector<int> X(N);
+  for (int &i : X) {
+    cin >> i;
+  }
+  
+  vector<int> X_index = X;
+  sort(X_index.begin(), X_index.end());
+  X_index.erase(unique(X_index.begin(), X_index.end()), X_index.end());
+  
+  for (int i : X) {
+    cout << lower_bound(X_index.begin(), X_index.end(), i) - X_index.begin() << " ";
+  }
+  
+  return 0;
+}
