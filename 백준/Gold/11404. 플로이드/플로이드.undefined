@@ -3,7 +3,7 @@
 #include <vector>
 using namespace std;
 
-vector<vector<long long>> floyd_warshall(auto& graph) {
+auto floyd_warshall(auto& graph) {
   for (int k = 1; k < graph.size(); k++) {
     for (int i = 1; i < graph.size(); i++) {
       for (int j = 1; j < graph.size(); j++) {
@@ -29,14 +29,13 @@ int main() {
   while (m--) {
     int a, b, c;
     cin >> a >> b >> c;
-    if (graph[a][b] > c) graph[a][b] = c;
+    graph[a][b] = min(graph[a][b], (long long)c);
   }
   
-  vector<vector<long long>> result = floyd_warshall(graph);
+  auto result = floyd_warshall(graph);
   for (int i = 1; i <= n; i++) {
     for (int j = 1; j <= n; j++) {
-      if (result[i][j] == INT_MAX) cout << "0 ";
-      else cout << result[i][j] << " ";
+      cout << (result[i][j] == INT_MAX ? 0 : result[i][j]) << " ";
     }
     cout << "\n";
   }
