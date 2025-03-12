@@ -1,0 +1,40 @@
+#include <algorithm>
+#include <cmath>
+#include <iostream>
+#include <vector>
+using namespace std;
+
+int distance(int x1, int y1, int x2, int y2) {
+  return pow(x2 - x1, 2) + pow(y2 - y1, 2);
+}
+
+int main() {
+  int T;
+  cin >> T;
+  
+  while (T--) {
+    vector<pair<int, int>> v(4);
+    for (auto& [x, y] : v) {
+      cin >> x >> y;
+    }
+    
+    vector<int> lengths;
+    for (int i = 0; i < 4; i++) {
+      for (int j = i + 1; j < 4; j++) {
+        lengths.push_back(distance(v[i].first, v[i].second, v[j].first, v[j].second));
+      }
+    }
+    
+    sort(lengths.begin(), lengths.end());
+    bool is_square = (lengths[0] > 0) && 
+                     (lengths[0] == lengths[1]) && 
+                     (lengths[1] == lengths[2]) && 
+                     (lengths[2] == lengths[3]) && 
+                     (lengths[4] == lengths[5]) && 
+                     (lengths[4] == 2 * lengths[0]);
+    
+    cout << (is_square ? "1\n" : "0\n");
+  }
+  
+  return 0;
+}
