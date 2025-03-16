@@ -1,0 +1,102 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Point {
+  long long x, y;
+  bool operator<(auto& other) { return x == other.x ? y < other.y : x < other.x; }
+};
+
+auto ccw(auto& a, auto& b, auto& c) {
+  return (a.x * b.y + b.x * c.y + c.x * a.y) - (a.y * b.x + b.y * c.x + c.y * a.x);
+}
+
+double distance(const Point& a, const Point& b) {
+  return (a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y);
+}
+
+auto convex_hull(auto& points) {
+  sort(points.begin(), points.end());
+  sort(points.begin() + 1, points.end(), [p = points.front()](auto& a, auto& b) {
+    auto c = ccw(p, a, b);
+    return c == 0 ? distance(p, a) < distance(p, b) : c > 0;
+  });
+
+  vector<Point> hull;
+  for (auto p : points) {
+    while (hull.size() >= 2 && ccw(end(hull)[-2], hull.back(), p) <= 0) hull.pop_back();
+    hull.push_back(p);
+  }
+
+  return hull;
+}
+
+bool check(auto& points, Point p) {
+  int flag = 0;
+  for (int i = 0; i < points.size(); i++) {
+    int j = i + 1;
+    if (j == points.size()) j = 0;
+    if (ccw(points[i], points[j], p) <= 0) flag = 1;
+  }
+  return flag;
+}
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+  cout << fixed << setprecision(3);
+
+  int t;
+  cin >> t;
+
+  while (t--) {
+    Point L, E;
+    cin >> L.x >> L.y;
+    cin >> E.x >> E.y;
+
+    int n;
+    cin >> n;
+
+    vector<Point> points(n);
+    for (auto& [x, y] : points) {
+      cin >> x >> y;
+    }
+
+    auto hull = convex_hull(points);
+
+    if (!check(hull, L) || !check(hull, E)) {
+      cout << "IMPOSSIBLE\n";
+    }
+    
+    else {
+      vector<Point> v = hull;
+      v.push_back(L);
+      v.push_back(E);
+      v = convex_hull(v);
+      
+      n = v.size();
+      
+      int i = 1, j = 1;
+      while(i <= n && ccw(v[i - 1], v[i % n], L) > 0) i++;
+      while(j <= n && ccw(v[j - 1], v[j % n], E) > 0) j++;
+      
+      if (i > n || j > n || i == j) {
+        cout << sqrt(distance(L, E)) << "\n";
+        continue;
+      }
+      
+      i %= n;
+      j %= n;
+      
+      double d1 = sqrt(distance(L, v[i])) + sqrt(distance(E, v[(j - 1 + n) % n]));
+      double d2 = sqrt(distance(L, v[(i - 1 + n) % n])) + sqrt(distance(E, v[j]));
+      
+      for (int k = i; k != (j - 1 + n) % n; k = (k + 1) % n) d1 += sqrt(distance(v[k], v[(k + 1) % n]));
+      for (int k = j; k != (i - 1 + n) % n; k = (k + 1) % n) d2 += sqrt(distance(v[k], v[(k + 1) % n]));
+      
+      cout.precision(3);
+      cout << min(d1, d2) << "\n";
+    }
+  }
+
+  return 0;
+}
