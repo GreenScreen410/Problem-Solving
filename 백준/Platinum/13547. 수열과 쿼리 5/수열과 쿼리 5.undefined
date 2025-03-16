@@ -1,0 +1,61 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int block;
+
+struct Query {
+  int index, s, e;
+  bool operator<(Query& x) {
+    if (s / block != x.s / block) return s / block < x.s / block;
+    return (s / block) & 1 ? e > x.e : e < x.e;
+  }
+};
+
+vector<int> compression(vector<int>& A) {
+  vector<int> temp = A;
+  sort(temp.begin(), temp.end());
+  temp.erase(unique(temp.begin(), temp.end()), temp.end());
+  for (int& i : A) i = lower_bound(temp.begin(), temp.end(), i) - temp.begin();
+  return A;
+}
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+  
+  int N;
+  cin >> N;
+  
+  block = sqrt(N);
+  
+  vector<int> A(N);
+  for (int& i : A) cin >> i;
+  A = compression(A);
+  
+  int Q;
+  cin >> Q;
+  
+  vector<Query> q(Q);
+  for (int i = 0; i < Q; i++) {
+    int l, r;
+    cin >> l >> r;
+    q[i] = {i, l - 1, r - 1};
+  }
+  sort(q.begin(), q.end());
+  
+  vector<int> result(Q), count(Q);
+  int now = 0, s = 0, e = -1;
+  
+  auto add = [&](int i) { if (count[A[i]]++ == 0) now++; };
+  auto sub = [&](int i) { if (--count[A[i]] == 0) now--; };
+  
+  for (auto& i : q) {
+    while (s > i.s) add(--s);
+    while (e < i.e) add(++e);
+    while (s < i.s) sub(s++);
+    while (e > i.e) sub(e--);
+    result[i.index] = now;
+  }
+  
+  for (int i : result) cout << i << "\n";
+}
