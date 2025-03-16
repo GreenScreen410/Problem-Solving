@@ -1,0 +1,17 @@
+#include <iostream>
+using namespace std;
+
+int main() {
+  string S;
+  getline(cin, S);
+
+  int count = 0;
+  for (auto& i : S) {
+    if (i == 'A' || i == 'a' || i == 'b' || i == 'D'|| i == 'd' || i == 'e' || i == 'g' || i == 'O' || i == 'o' || i == 'P' || i == 'p' || i == 'Q' || i == 'q' || i == 'R' || i == '@') count++;
+    else if (i == 'B') count += 2;
+  }
+  
+  cout << count;
+  
+  return 0;
+}
