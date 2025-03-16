@@ -1,0 +1,16 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  long long A, B;
+  cin >> A >> B;
+  
+  if (A > B) swap(A, B);
+
+  cout << (A == B ? 0 : B - A - 1) << "\n";
+  for (long long i = A + 1; i < B; i++) {
+    cout << i << " ";
+  }
+  
+  return 0;
+}
