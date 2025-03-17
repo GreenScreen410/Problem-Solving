@@ -1,0 +1,71 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int block;
+
+struct Query {
+  int index, s, e;
+  bool operator<(const Query &x) const {
+    if (s / block != x.s / block) return s / block < x.s / block;
+    return (s / block) & 1 ? e > x.e : e < x.e;
+  }
+};
+
+vector<int> compression(vector<int> &A) {
+  vector<int> temp = A;
+  sort(temp.begin(), temp.end());
+  temp.erase(unique(temp.begin(), temp.end()), temp.end());
+  for (int &i : A) i = lower_bound(temp.begin(), temp.end(), i) - temp.begin();
+  return A;
+}
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  int N, Q;
+  cin >> N >> Q;
+
+  block = sqrt(N);
+
+  vector<int> A(N);
+  for (int &i : A) cin >> i;
+  A = compression(A);
+
+  vector<Query> q(Q);
+  for (int i = 0; i < Q; i++) {
+    int L, R;
+    cin >> L >> R;
+    q[i] = {i, L - 1, R - 1};
+  }
+  sort(q.begin(), q.end());
+
+  int answer = 0;
+  vector<int> result(Q), count(*max_element(A.begin(), A.end()) + 1, 0);
+
+  auto add = [&](int i) {
+    if (count[i]++ == 2) answer--;
+    else if (count[i] == 2) answer++;
+  };
+
+  auto sub = [&](int i) {
+    if (count[i]-- == 2) answer--;
+    else if (count[i] == 2) answer++;
+  };
+
+  int s = q[0].s, e = q[0].e;
+  for (int i = s; i <= e; i++) {
+    add(A[i]);
+  }
+  result[q[0].index] = answer;
+
+  for (auto &i : q) {
+    while (s > i.s) add(A[--s]);
+    while (e < i.e) add(A[++e]);
+    while (s < i.s) sub(A[s++]);
+    while (e > i.e) sub(A[e--]);
+    result[i.index] = answer;
+  }
+
+  for (int i : result) cout << i << "\n";
+}
