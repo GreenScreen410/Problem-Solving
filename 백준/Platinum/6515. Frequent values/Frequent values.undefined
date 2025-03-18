@@ -1,0 +1,84 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int block;
+
+struct Query {
+  int index, s, e;
+  bool operator<(const Query& x) const {
+    if (s / block != x.s / block) return s / block < x.s / block;
+    return (s / block) & 1 ? e > x.e : e < x.e;
+  }
+};
+
+vector<int> compression(vector<int>& A) {
+  vector<int> temp = A;
+  sort(temp.begin(), temp.end());
+  temp.erase(unique(temp.begin(), temp.end()), temp.end());
+  for (int& i : A) i = lower_bound(temp.begin(), temp.end(), i) - temp.begin();
+  return A;
+}
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  while (true) {
+    int N, Q;
+    cin >> N;
+    if (N == 0) break;
+    cin >> Q;
+
+    vector<int> A(N);
+    for (int& i : A) cin >> i;
+    A = compression(A);
+
+    vector<Query> q(Q);
+    for (int i = 0; i < Q; i++) {
+      int l, r;
+      cin >> l >> r;
+      q[i] = {i, l - 1, r - 1};
+    }
+    block = sqrt(N);
+    sort(q.begin(), q.end());
+
+    vector<int> result(Q);
+    vector<int> f(A.size());
+    vector<int> count(N + 1);
+    int current = 0;
+
+    int s = 0, e = -1;
+
+    auto add = [&](int i) {
+      int value = A[i];
+      int old_count = f[value];
+      f[value]++;
+      int new_count = f[value];
+      count[new_count]++;
+      if (old_count > 0) count[old_count]--;
+      if (new_count > current) current = new_count;
+    };
+
+    auto remove = [&](int i) {
+      int value = A[i];
+      int old_count = f[value];
+      f[value]--;
+      int new_count = f[value];
+      count[new_count]++;
+      count[old_count]--;
+      if (old_count == current && count[old_count] == 0) current--;
+    };
+
+    for (auto& query : q) {
+      while (s > query.s) add(--s);
+      while (e < query.e) add(++e);
+      while (s < query.s) remove(s++);
+      while (e > query.e) remove(e--);
+      result[query.index] = current;
+    }
+
+    for (int i : result) cout << i << "\n";
+  }
+
+  return 0;
+}
