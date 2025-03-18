@@ -1,0 +1,26 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  int N, K;
+  cin >> N >> K;
+
+  vector<int> male(6), female(6);
+  while (N--) {
+    int S, Y;
+    cin >> S >> Y;
+
+    if (S == 0) female[Y - 1]++;
+    else male[Y - 1]++;
+  }
+
+  int count = 0;
+  for (int i = 0; i < 6; i++) {
+    count += (male[i] + K - 1) / K;
+    count += (female[i] + K - 1) / K;
+  }
+
+  cout << count;
+
+  return 0;
+}
