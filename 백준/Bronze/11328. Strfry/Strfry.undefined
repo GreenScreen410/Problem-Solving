@@ -1,0 +1,28 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  int N;
+  cin >> N;
+
+  while (N--) {
+    string A, B;
+    cin >> A >> B;
+
+    vector<int> count(26);
+    for (char i : A) count[i - 'a']++;
+    for (char i : B) count[i - 'a']--;
+
+    bool flag = true;
+    for (int i : count) {
+      if (i != 0) {
+        flag = false;
+        break;
+      }
+    }
+
+    cout << (flag ? "Possible\n" : "Impossible\n");
+  }
+
+  return 0;
+}
