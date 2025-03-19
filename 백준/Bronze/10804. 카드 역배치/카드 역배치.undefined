@@ -1,0 +1,17 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  vector<int> cards(20);
+  iota(cards.begin(), cards.end(), 1);
+
+  for (int i = 0; i < 10; i++) {
+    int a, b;
+    cin >> a >> b;
+    reverse(cards.begin() + a - 1, cards.begin() + b);
+  }
+
+  for (int i : cards) cout << i << " ";
+
+  return 0;
+}
