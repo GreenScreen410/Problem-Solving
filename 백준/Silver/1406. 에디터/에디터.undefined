@@ -1,0 +1,35 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  string S;
+  cin >> S;
+
+  int M;
+  cin >> M;
+
+  list<char> L;
+  for (auto i : S) L.push_back(i);
+
+  auto cursor = L.end();
+  while (M--) {
+    char command;
+    cin >> command;
+
+    if (command == 'L') {
+      if (cursor != L.begin()) cursor--;
+    } else if (command == 'D') {
+      if (cursor != L.end()) cursor++;
+    } else if (command == 'B') {
+      if (cursor != L.begin()) cursor = L.erase(--cursor);
+    } else if (command == 'P') {
+      char X;
+      cin >> X;
+      L.insert(cursor, X);
+    }
+  }
+
+  for (auto i : L) cout << i;
+
+  return 0;
+}
