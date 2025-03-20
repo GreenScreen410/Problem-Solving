@@ -1,0 +1,18 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  int N;
+  cin >> N;
+
+  unsigned long long grundy = 0;
+  while (N--) {
+    int P;
+    cin >> P;
+    grundy ^= P;
+  }
+
+  cout << (grundy != 0 ? "koosaga" : "cubelover");
+
+  return 0;
+}
