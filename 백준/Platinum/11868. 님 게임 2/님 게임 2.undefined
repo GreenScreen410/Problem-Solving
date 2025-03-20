@@ -5,7 +5,7 @@ int main() {
   int N;
   cin >> N;
 
-  unsigned long long grundy = 0;
+  int grundy = 0;
   while (N--) {
     int P;
     cin >> P;
