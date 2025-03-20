@@ -1,0 +1,16 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  for (int i = 0; i < 4; i++) {
+    int x1, y1, p1, q1, x2, y2, p2, q2;
+    cin >> x1 >> y1 >> p1 >> q1 >> x2 >> y2 >> p2 >> q2;
+
+    if (x1 > p2 || y1 > q2 || x2 > p1 || y2 > q1) cout << "d\n";
+    else if ((x1 == p2 && y1 == q2) || (x1 == p2 && q1 == y2) || (x2 == p1 && y2 == q1) || (x2 == p1 && q2 == y1)) cout << "c\n";
+    else if (x1 == p2 || y1 == q2 || x2 == p1 || y2 == q1) cout << "b\n";
+    else cout << "a\n";
+  }
+
+  return 0;
+}
