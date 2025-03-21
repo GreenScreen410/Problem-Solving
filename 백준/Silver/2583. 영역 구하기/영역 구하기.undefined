@@ -1,0 +1,70 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+auto bfs(auto& graph, auto& visited, pair<int, int> start) {
+  int area = 1;
+  queue<pair<int, int>> q;
+
+  visited[start.first][start.second] = true;
+  q.push(start);
+
+  while (!q.empty()) {
+    auto [x, y] = q.front();
+    q.pop();
+
+    vector<pair<int, int>> directions = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+    for (int i = 0; i < 4; i++) {
+      int new_x = x + directions[i].first;
+      int new_y = y + directions[i].second;
+
+      if (new_x < 0 || new_x >= graph.size() || new_y < 0 || new_y >= graph[0].size()) {
+        continue;
+      }
+
+      if (!visited[new_x][new_y]) {
+        visited[new_x][new_y] = true;
+        area++;
+        q.push({new_x, new_y});
+      }
+    }
+  }
+
+  return area;
+}
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  int M, N, K;
+  cin >> M >> N >> K;
+
+  vector<vector<int>> graph(M, vector<int>(N, 0));
+  vector<vector<bool>> visited(M, vector<bool>(N, false));
+
+  while (K--) {
+    int x1, y1, x2, y2;
+    cin >> x1 >> y1 >> x2 >> y2;
+
+    for (int i = y1; i < y2; i++) {
+      for (int j = x1; j < x2; j++) {
+        visited[i][j] = true;
+      }
+    }
+  }
+
+  vector<int> areas;
+  for (int i = 0; i < M; i++) {
+    for (int j = 0; j < N; j++) {
+      if (!visited[i][j]) {
+        areas.push_back(bfs(graph, visited, {i, j}));
+      }
+    }
+  }
+
+  sort(areas.begin(), areas.end());
+  cout << areas.size() << "\n";
+  for (int area : areas) cout << area << " ";
+
+  return 0;
+}
