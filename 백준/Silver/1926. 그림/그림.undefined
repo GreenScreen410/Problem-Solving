@@ -1,0 +1,63 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int area = 1;
+
+auto bfs(auto& q, auto& graph, auto& visited, pair<int, int> start) {
+  visited[start.first][start.second] = true;
+  q.push(start);
+
+  while (!q.empty()) {
+    auto [x, y] = q.front();
+    q.pop();
+
+    vector<pair<int, int>> directions = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+    for (int i = 0; i < 4; i++) {
+      int new_x = x + directions[i].first;
+      int new_y = y + directions[i].second;
+
+      if (new_x < 0 || new_x >= graph.size() || new_y < 0 || new_y >= graph[0].size()) {
+        continue;
+      }
+
+      if (!visited[new_x][new_y] && graph[new_x][new_y] == 1) {
+        visited[new_x][new_y] = true;
+        area++;
+        q.push({new_x, new_y});
+      }
+    }
+  }
+}
+
+int main() {
+  int n, m;
+  cin >> n >> m;
+
+  vector<vector<int>> graph(n, vector<int>(m));
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < m; j++) {
+      cin >> graph[i][j];
+    }
+  }
+
+  queue<pair<int, int>> q;
+  vector<vector<bool>> visited(n, vector<bool>(m));
+  vector<int> v;
+
+  int count = 0;
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < m; j++) {
+      if (!visited[i][j] && graph[i][j] == 1) {
+        bfs(q, graph, visited, {i, j});
+        v.push_back(area);
+        count++;
+        area = 1;
+      }
+    }
+  }
+
+  cout << count << "\n";
+  cout << (!v.empty() ? *max_element(v.begin(), v.end()) : 0) << "\n";
+
+  return 0;
+}
