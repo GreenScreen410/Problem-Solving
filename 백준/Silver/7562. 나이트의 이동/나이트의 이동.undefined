@@ -1,0 +1,60 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+auto bfs(auto& graph, auto& visited, pair<int, int> start) {
+  queue<pair<int, int>> q;
+
+  visited[start.first][start.second] = true;
+  q.push(start);
+
+  while (!q.empty()) {
+    auto [x, y] = q.front();
+    q.pop();
+
+    vector<pair<int, int>> directions = {{2, 1}, {1, 2}, {2, -1}, {1, -2}, {-2, 1}, {-1, 2}, {-2, -1}, {-1, -2}};
+    for (int i = 0; i < 8; i++) {
+      int new_x = x + directions[i].first;
+      int new_y = y + directions[i].second;
+
+      if (new_x < 0 || new_x >= graph.size() || new_y < 0 || new_y >= graph[0].size()) {
+        continue;
+      }
+
+      if (!visited[new_x][new_y]) {
+        visited[new_x][new_y] = true;
+        graph[new_x][new_y] = graph[x][y] + 1;
+        q.push({new_x, new_y});
+      }
+    }
+  }
+}
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  int t;
+  cin >> t;
+
+  while (t--) {
+    int l;
+    cin >> l;
+
+    pair<int, int> start, end;
+    cin >> start.first >> start.second;
+    cin >> end.first >> end.second;
+
+    if (start == end) {
+      cout << "0\n";
+      continue;
+    }
+
+    vector<vector<int>> graph(l, vector<int>(l));
+    vector<vector<bool>> visited(l, vector<bool>(l));
+    bfs(graph, visited, start);
+
+    cout << graph[end.first][end.second] << "\n";
+  }
+
+  return 0;
+}
