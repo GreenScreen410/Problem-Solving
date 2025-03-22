@@ -1,0 +1,76 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+auto bfs(queue<pair<int, int>>& q, auto& graph, auto& visited) {
+  int days = 0;
+
+  while (!q.empty()) {
+    int size = q.size();
+    bool flag = false;
+    
+    vector<pair<int, int>> directions = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+    for (int t = 0; t < size; t++) {
+      auto [x, y] = q.front();
+      q.pop();
+      
+      for (int i = 0; i < 4; i++) {
+        int new_x = x + directions[i].first;
+        int new_y = y + directions[i].second;
+  
+        if (new_x < 0 || new_x >= graph.size() || new_y < 0 || new_y >= graph[0].size()) {
+          continue;
+        }
+  
+        if (!visited[new_x][new_y] && graph[new_x][new_y] == 0) {
+          visited[new_x][new_y] = true;
+          graph[new_x][new_y] = 1;
+          q.push({new_x, new_y});
+          flag = true;
+        }
+      }
+    }
+    
+    if (flag) days++;
+  }
+  
+  return days;
+}
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  int M, N;
+  cin >> M >> N;
+
+  vector<vector<int>> graph(N, vector<int>(M));
+  vector<vector<bool>> visited(N, vector<bool>(M));
+  queue<pair<int, int>> q;
+
+  for (int i = 0; i < N; i++) {
+    for (int j = 0; j < M; j++) {
+      cin >> graph[i][j];
+      if (graph[i][j] == 1) {
+        q.push({i, j});
+        visited[i][j] = true;
+      } else if (graph[i][j] == -1) {
+        visited[i][j] = true;
+      }
+    }
+  }
+
+  int days = bfs(q, graph, visited);
+
+  for (int i = 0; i < N; i++) {
+    for (int j = 0; j < M; j++) {
+      if (graph[i][j] == 0) {
+        cout << -1 << "\n";
+        return 0;
+      }
+    }
+  }
+
+  cout << days << "\n";
+  
+  return 0;
+}
