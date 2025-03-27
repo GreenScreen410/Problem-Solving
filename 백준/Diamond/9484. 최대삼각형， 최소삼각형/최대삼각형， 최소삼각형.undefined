@@ -1,0 +1,76 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Point {
+  long long x, y;
+
+  bool operator<(const Point &p) const {
+    return make_pair(x, y) < make_pair(p.x, p.y);
+  }
+  bool operator==(const Point &p) const {
+    return make_pair(x, y) == make_pair(p.x, p.y);
+  }
+};
+
+struct Line {
+  long long i, j, dx, dy;
+
+  bool operator<(const Line &l) const {
+    return make_tuple(dy * l.dx, i, j) < make_tuple(l.dy * dx, l.i, l.j);
+  }
+  bool operator==(const Line &l) const {
+    return dy * l.dx == l.dy * dx;
+  }
+};
+
+auto triangle_area(const Point &a, const Point &b, const Point &c) {
+  return abs((b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x));
+}
+
+int main() {
+  while (true) {
+    int n;
+    cin >> n;
+
+    if (n == 0) break;
+
+    vector<Point> points(n + 1);
+    for (int i = 1; i <= n; i++) cin >> points[i].x >> points[i].y;
+    sort(points.begin() + 1, points.end());
+
+    vector<long long> index(n + 1);
+    for (int i = 1; i <= n; i++) index[i] = i;
+
+    vector<Line> lines;
+    for (int i = 1; i <= n; i++) {
+      for (int j = i + 1; j <= n; j++) {
+        lines.push_back({i, j, points[j].x - points[i].x, points[j].y - points[i].y});
+      }
+    }
+    sort(lines.begin(), lines.end());
+
+    long long min = LLONG_MAX, max = LLONG_MIN;
+    for (int i = 0, j = 0; i < lines.size(); i = j) {
+      while (j < lines.size() && lines[i] == lines[j]) j++;
+      for (int k = i; k < j; k++) {
+        int u = lines[k].i, v = lines[k].j;
+        swap(index[u], index[v]);
+        swap(points[index[u]], points[index[v]]);
+
+        if (index[u] > index[v]) swap(u, v);
+        if (index[u] > 1) {
+          min = std::min(min, triangle_area(points[index[u]], points[index[v]], points[index[u] - 1]));
+          max = std::max(max, triangle_area(points[index[u]], points[index[v]], points[1]));
+        }
+        if (index[v] < n) {
+          min = std::min(min, triangle_area(points[index[u]], points[index[v]], points[index[v] + 1]));
+          max = std::max(max, triangle_area(points[index[u]], points[index[v]], points[n]));
+        }
+      }
+    }
+
+    cout << fixed << setprecision(1) << (min / 2.0) << " " << (max / 2.0) << "\n";
+  }
+
+  return 0;
+}
