@@ -1,0 +1,40 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+auto floyd_warshall(auto& graph) {
+  int n = graph.size();
+  for (int k = 1; k < n; k++) {
+    for (int i = 1; i < n; i++) {
+      for (int j = 1; j < n; j++) {
+        graph[i][j][k] = min(graph[i][j][k - 1], graph[i][k][k - 1] + graph[k][j][k - 1]);
+      }
+    }
+  }
+  return graph;
+}
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  int N, Q;
+  cin >> N >> Q;
+
+  vector<vector<vector<long long>>> graph(N + 1, vector<vector<long long>>(N + 1, vector<long long>(N + 1, INT_MAX)));
+  for (int i = 1; i <= N; i++) {
+    for (int j = 1; j <= N; j++) {
+      cin >> graph[i][j][0];
+      if (i == j) continue;
+      if (graph[i][j][0] == 0) graph[i][j][0] = INT_MAX;
+    }
+  }
+
+  auto result = floyd_warshall(graph);
+  while (Q--) {
+    int C, s, e;
+    cin >> C >> s >> e;
+    cout << (result[s][e][C - 1] == INT_MAX ? -1 : result[s][e][C - 1]) << "\n";
+  }
+  
+  return 0;
+}
