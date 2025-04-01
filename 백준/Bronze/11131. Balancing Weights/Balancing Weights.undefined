@@ -1,0 +1,24 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  int T;
+  cin >> T;
+
+  while (T--) {
+    int N;
+    cin >> N;
+
+    vector<int> W(N);
+    for (int& i : W) cin >> i;
+
+    int torque = 0;
+    for (int i : W) torque += 100 * i;
+
+    if (torque == 0) cout << "Equilibrium\n";
+    else if (torque > 0) cout << "Right\n";
+    else cout << "Left\n";
+  }
+
+  return 0;
+}
