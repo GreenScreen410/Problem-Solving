@@ -1,0 +1,24 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  int T;
+  cin >> T;
+
+  for (int x = 1; x <= T; x++) {
+    int N;
+    cin >> N;
+
+    vector<double> bushes(N);
+    for (auto& i : bushes) cin >> i;
+
+    for (int i = 1; i <= N - 2; i++) {
+      double average = (bushes[i - 1] + bushes[i + 1]) / 2.0;
+      if (bushes[i] > average) bushes[i] = average;
+    }
+
+    cout << "Case #" << x << ": " << fixed << setprecision(4) << bushes[N - 2] << "\n";
+  }
+
+  return 0;
+}
