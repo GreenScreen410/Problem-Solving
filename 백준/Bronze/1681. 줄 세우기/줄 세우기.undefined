@@ -1,0 +1,21 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  int N, L;
+  cin >> N >> L;
+
+  int count = 0, current = 0;
+  while (count < N) {
+    current++;
+    string s = to_string(current);
+    if (s.find('0' + L) == string::npos) count++;
+  }
+
+  cout << current << "\n";
+
+  return 0;
+}
