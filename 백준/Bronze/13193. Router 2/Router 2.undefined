@@ -1,0 +1,17 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  int N, Mlim, Plim;
+  cin >> N >> Mlim >> Plim;
+
+  int M = N * N;
+  cout << 2 * N << " " << M << "\n";
+  for (int i = 1; i <= N; i++) {
+    for (int j = N + 1; j <= 2 * N; j++) {
+      cout << i << " " << j << "\n";
+    }
+  }
+
+  return 0;
+}
