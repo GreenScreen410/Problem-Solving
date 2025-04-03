@@ -1,0 +1,20 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  long long C, W, L, P;
+  while (true) {
+    cin >> C >> W >> L >> P;
+    if (C == 0 && W == 0 && L == 0 && P == 0) break;
+
+    if (C == 0) cout << "0\n";
+    else if (C == 1) cout << "1\n";
+    else if (W * L * P == 0) cout << "1\n";
+    else cout << fixed << setprecision(0) << pow(C, W * L * P) << "\n";
+  }
+
+  return 0;
+}
