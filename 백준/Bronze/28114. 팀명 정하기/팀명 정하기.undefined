@@ -1,0 +1,31 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Member {
+  int P, Y;
+  string S;
+};
+
+int main() {
+  Member members[3];
+  for (auto &i : members) {
+    cin >> i.P >> i.Y >> i.S;
+  }
+
+  vector<int> years;
+  for (int i = 0; i < 3; i++) {
+    years.push_back(members[i].Y % 100);
+  }
+  sort(years.begin(), years.end());
+
+  for (int y : years) cout << setw(2) << setfill('0') << y;
+  cout << "\n";
+
+  vector<Member> result(members, members + 3);
+  sort(result.begin(), result.end(), [](auto &a, auto &b) {
+    return a.P > b.P;
+  });
+  for (auto &i : result) cout << i.S[0];
+
+  return 0;
+}
