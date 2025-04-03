@@ -1,0 +1,29 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  int N;
+  cin >> N;
+
+  while (N--) {
+    string s;
+    cin >> s;
+
+    int count = 1;
+    for (int i = 1; i < s.size(); i++) {
+      if (s[i] == s[i - 1]) count++;
+      else {
+        cout << count << " " << s[i - 1] << " ";
+        count = 1;
+      }
+    }
+
+    cout << count << " " << s[s.size() - 1];
+    cout << "\n";
+  }
+
+  return 0;
+}
