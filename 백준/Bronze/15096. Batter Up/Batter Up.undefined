@@ -1,0 +1,24 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  int n;
+  cin >> n;
+
+  double count = 0, total = 0;
+  while (n--) {
+    int bats;
+    cin >> bats;
+    if (bats != -1) {
+      count++;
+      total += bats;
+    }
+  }
+
+  cout << fixed << setprecision(3) << total / count << "\n";
+
+  return 0;
+}
