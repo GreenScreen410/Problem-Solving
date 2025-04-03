@@ -1,0 +1,22 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  int L, user = 1;
+  while (cin >> L && L != 0) {
+    int N;
+    cin >> N;
+
+    cout << "User " << user++ << "\n";
+    for (int i = 0; i < N; i++) {
+      int steps;
+      cin >> steps;
+      cout << fixed << setprecision(5) << (steps * L) / 100000.0 << "\n";
+    }
+  }
+
+  return 0;
+}
