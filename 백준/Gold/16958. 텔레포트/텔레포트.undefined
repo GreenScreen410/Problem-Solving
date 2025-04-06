@@ -1,0 +1,47 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+void floyd_warshall(vector<vector<int>>& graph) {
+  int n = graph.size();
+  for (int i = 1; i < n; i++) graph[i][i] = 0;
+
+  for (int k = 1; k < n; k++) {
+    for (int i = 1; i < n; i++) {
+      for (int j = 1; j < n; j++) {
+        graph[i][j] = min(graph[i][j], graph[i][k] + graph[k][j]);
+      }
+    }
+  }
+}
+
+int main() {
+  int N, T;
+  cin >> N >> T;
+
+  vector<int> s(N + 1), x(N + 1), y(N + 1);
+  for (int i = 1; i <= N; i++) {
+    cin >> s[i] >> x[i] >> y[i];
+  }
+
+  vector<vector<int>> graph(N + 1, vector<int>(N + 1, INT_MAX));
+  for (int i = 1; i <= N; i++) {
+    for (int j = 1; j <= N; j++) {
+      int dist = abs(x[i] - x[j]) + abs(y[i] - y[j]);
+      graph[i][j] = dist;
+      if (s[i] == 1 && s[j] == 1) graph[i][j] = min(dist, T);
+    }
+  }
+
+  floyd_warshall(graph);
+
+  int M;
+  cin >> M;
+
+  while (M--) {
+    int a, b;
+    cin >> a >> b;
+    cout << (graph[a][b] == INT_MAX ? -1 : graph[a][b]) << "\n";
+  }
+
+  return 0;
+}
