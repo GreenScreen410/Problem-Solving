@@ -1,0 +1,47 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+auto floyd_warshall(auto& graph) {
+  int n = graph.size();
+  for (int i = 1; i < n; i++) graph[i][i] = 0;
+
+  for (int k = 1; k < n; k++) {
+    for (int i = 1; i < n; i++) {
+      for (int j = 1; j < n; j++) {
+        if (graph[i][k] != INT_MAX && graph[k][j] != INT_MAX) graph[i][j] = min(graph[i][j], graph[i][k] + graph[k][j]);
+      }
+    }
+  }
+}
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  int N, K;
+  cin >> N >> K;
+
+  vector<vector<int>> graph(N + 1, vector<int>(N + 1, INT_MAX));
+  while (K--) {
+    int A, B;
+    cin >> A >> B;
+    graph[A][B] = 1;
+    graph[B][A] = 1;
+  }
+
+  floyd_warshall(graph);
+
+  for (int i = 1; i <= N; i++) {
+    for (int j = 1; j <= N; j++) {
+      if (i == j) continue;
+      if (graph[i][j] > 6) {
+        cout << "Big World!" << "\n";
+        return 0;
+      }
+    }
+  }
+
+  cout << "Small World!" << "\n";
+
+  return 0;
+}
