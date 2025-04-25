@@ -1,0 +1,15 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  int N, k;
+  cin >> N >> k;
+
+  vector<int> x(N);
+  for (int& i : x) cin >> i;
+  sort(x.begin(), x.end(), greater<int>());
+
+  cout << x[k - 1] << "\n";
+
+  return 0;
+}
