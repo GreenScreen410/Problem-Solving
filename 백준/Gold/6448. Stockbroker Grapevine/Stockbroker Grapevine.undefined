@@ -1,0 +1,61 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+auto floyd_warshall(auto& graph) {
+  int n = graph.size();
+  for (int i = 1; i < n; i++) graph[i][i] = 0;
+  for (int k = 1; k < n; k++) {
+    for (int i = 1; i < n; i++) {
+      for (int j = 1; j < n; j++) {
+        if (graph[i][k] != INT_MAX && graph[k][j] != INT_MAX) {
+          graph[i][j] = min(graph[i][j], graph[i][k] + graph[k][j]);
+        }
+      }
+    }
+  }
+}
+
+int main(){
+  ios_base::sync_with_stdio(false);
+  cin.tie(NULL);
+
+  while (true) {
+    int N;
+    cin >> N;
+    if (N == 0) break;
+
+    vector<vector<int>> graph(N + 1, vector<int>(N + 1, INT_MAX));
+    for (int u = 1; u <= N; u++) {
+      int k; 
+      cin >> k;
+      
+      while (k--) {
+        int v, t;
+        cin >> v >> t;
+        graph[u][v] = t;
+      }
+    }
+
+    floyd_warshall(graph);
+
+    int best_broker = -1, best_time = INT_MAX;
+    for (int i = 1; i <= N; i++) {
+      int max_time = 0;
+      for (int j = 1; j <= N; j++) {
+        if (graph[i][j] == INT_MAX) {
+          max_time = INT_MAX;
+          break;
+        }
+        max_time = max(max_time, graph[i][j]);
+      }
+      if (max_time < best_time) {
+        best_time = max_time;
+        best_broker = i;
+      }
+    }
+    
+    cout << (best_broker == -1 ? "disjoint\n" : to_string(best_broker) + " " + to_string(best_time) + "\n");
+  }
+
+  return 0;
+}
