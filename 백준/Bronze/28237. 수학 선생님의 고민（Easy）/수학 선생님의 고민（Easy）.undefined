@@ -1,0 +1,35 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+auto get(auto x) {
+  vector<pair<long long, long long>> result;
+  long long m = llabs(x);
+  for (long long i = 1; i * i <= m; i++) {
+    if (m % i == 0) {
+      result.emplace_back(i, x / i);
+      if (i * i != m) result.emplace_back(m / i, x / (m / i));
+    }
+  }
+  return result;
+}
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  long long n;
+  cin >> n;
+
+  for (auto [a, c] : get(n)) {
+    for (auto [b, d] : get(-(n + 2))) {
+      if (a * d + b * c == n + 1) {
+        cout << a << " " << b << " " << c << " " << d << "\n";
+        return 0;
+      }
+    }
+  }
+
+  cout << "-1\n";
+
+  return 0;
+}
