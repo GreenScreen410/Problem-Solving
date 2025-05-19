@@ -1,0 +1,31 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  vector<int> v(5);
+  for (int& i : v) cin >> i;
+  reverse(v.begin(), v.end());
+
+  int count = 0;
+  for (int i = 4; i >= 0; i--) {
+    while (v[i] > 0) {
+      count++;
+      v[i]--;
+
+      int remain = 4 - i;
+      for (int j = i; j >= 0; j--) {
+        while (remain >= j + 1 && v[j] > 0) {
+          remain -= j + 1;
+          v[j]--;
+        }
+      }
+    }
+  }
+
+  cout << count << "\n";
+
+  return 0;
+}
