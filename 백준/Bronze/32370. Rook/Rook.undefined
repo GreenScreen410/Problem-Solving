@@ -1,0 +1,20 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  ios_base::sync_with_stdio(0);
+  cin.tie(0);
+
+  int a, b, x, y;
+  cin >> a >> b >> x >> y;
+
+  if (a && b) {
+    cout << "2\n";
+  } else if ((a == 0 && x == 0 && y < b) || (b == 0 && y == 0 && x < a)) {
+    cout << "3\n";
+  } else {
+    cout << "1\n";
+  }
+
+  return 0;
+}
