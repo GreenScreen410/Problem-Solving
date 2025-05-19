@@ -1,0 +1,47 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  int n, m;
+  cin >> n >> m;
+
+  vector<long long> A(n);
+  for (auto& i : A) cin >> i;
+  sort(A.begin(), A.end());
+
+  while (m--) {
+    long long x;
+    cin >> x;
+
+    if (x == 1) {
+      long long k;
+      cin >> k;
+
+      auto it = lower_bound(A.begin(), A.end(), k);
+      int count = A.end() - it;
+      cout << count << "\n";
+
+    } else if (x == 2) {
+      long long k;
+      cin >> k;
+
+      auto it = upper_bound(A.begin(), A.end(), k);
+      int count = A.end() - it;
+      cout << count << "\n";
+
+    } else if (x == 3) {
+      long long i, j;
+      cin >> i >> j;
+
+      auto lower = lower_bound(A.begin(), A.end(), i);
+      auto upper = upper_bound(A.begin(), A.end(), j);
+
+      cout << upper - lower << "\n";
+    }
+  }
+
+  return 0;
+}
