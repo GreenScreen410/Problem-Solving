@@ -1,0 +1,78 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+template <typename T>
+class SegmentTree {
+ private:
+  vector<T> tree, a;
+  int n;
+
+  static int left(int node) { return 2 * node + 1; }
+  static int right(int node) { return 2 * node + 2; }
+  static int mid(int l, int r) { return l + (r - l) / 2; }
+
+  void build(int node, int l, int r) {
+    if (l == r) tree[node] = a[l];
+    else {
+      build(left(node), l, mid(l, r));
+      build(right(node), mid(l, r) + 1, r);
+      tree[node] = tree[left(node)] + tree[right(node)];
+    }
+  }
+
+  void update(int node, int l, int r, int index, T value) {
+    if (l == r) tree[node] = a[index] = value;
+    else {
+      if (index <= mid(l, r)) update(left(node), l, mid(l, r), index, value);
+      else update(right(node), mid(l, r) + 1, r, index, value);
+      tree[node] = tree[left(node)] + tree[right(node)];
+    }
+  }
+
+  T query(int node, int l, int r, int query_l, int query_r) {
+    if (query_r < l || r < query_l) return 0;
+    if (query_l <= l && r <= query_r) return tree[node];
+    return query(left(node), l, mid(l, r), query_l, query_r) + query(right(node), mid(l, r) + 1, r, query_l, query_r);
+  }
+
+ public:
+  SegmentTree(const vector<T>& a) : a(a), n(a.size()) {
+    tree.resize(1 << (int)ceil(log2(n)) + 1);
+    build(0, 0, n - 1);
+  }
+
+  void update(int index, T value) {
+    update(0, 0, n - 1, index, value);
+  }
+  T query(int l, int r) {
+    return query(0, 0, n - 1, l, r);
+  };
+};
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  int N, M;
+  cin >> N >> M;
+
+  vector<long long> A(N);
+  SegmentTree<long long> st(A);
+  while (M--) {
+    int op;
+    cin >> op;
+
+    if (op == 0) {
+      long long i, j;
+      cin >> i >> j;
+      if (i > j) swap(i, j);
+      cout << st.query(i - 1, j - 1) << "\n";
+    } else {
+      long long i, k;
+      cin >> i >> k;
+      st.update(i - 1, k);
+    }
+  }
+
+  return 0;
+}
