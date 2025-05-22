@@ -1,0 +1,55 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+template <typename T>
+struct Point {
+  T x, y;
+
+  bool operator<(const Point& other) const {
+    return tie(x, y) < tie(other.x, other.y);
+  }
+  bool operator==(const Point& other) const {
+    return tie(x, y) == tie(other.x, other.y);
+  }
+  T distance_squared(const Point& other) const {
+    return pow(x - other.x, 2) + pow(y - other.y, 2);
+  }
+};
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  for (int t = 1; t <= 3; t++) {
+    int N;
+    cin >> N;
+    if (N == 0) break;
+
+    vector<Point<int>> points(N);
+    for (auto& [x, y] : points) cin >> x >> y;
+
+    Point<int> a, b;
+    int q;
+    cin >> a.x >> a.y >> b.x >> b.y >> q;
+
+    vector<int> distance_to_a(N), distance_to_b(N);
+    for (int i = 0; i < N; i++) {
+      distance_to_a[i] = points[i].distance_squared(a);
+      distance_to_b[i] = points[i].distance_squared(b);
+    }
+    sort(distance_to_a.begin(), distance_to_a.end());
+    sort(distance_to_b.begin(), distance_to_b.end());
+
+    cout << "Case " << t << ":\n";
+    while (q--) {
+      int R1, R2;
+      cin >> R1 >> R2;
+
+      int count_a = upper_bound(distance_to_a.begin(), distance_to_a.end(), R1 * R1) - distance_to_a.begin();
+      int count_b = upper_bound(distance_to_b.begin(), distance_to_b.end(), R2 * R2) - distance_to_b.begin();
+      cout << max(0, N - count_a - count_b) << "\n";
+    }
+  }
+
+  return 0;
+}
