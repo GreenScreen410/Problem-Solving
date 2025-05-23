@@ -1,0 +1,28 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  int N, M;
+  cin >> N >> M;
+
+  vector<string> pokedex(N + 1);
+  unordered_map<string, int> index;
+  index.reserve(N);
+
+  for (int i = 1; i <= N; i++) {
+    cin >> pokedex[i];
+    index[pokedex[i]] = i;
+  }
+
+  while (M--) {
+    string q;
+    cin >> q;
+    if (isdigit(q[0])) cout << pokedex[stoi(q)] << "\n";
+    else cout << index[q] << "\n";
+  }
+
+  return 0;
+}
