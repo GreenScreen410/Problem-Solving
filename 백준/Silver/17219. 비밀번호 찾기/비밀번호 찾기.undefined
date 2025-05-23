@@ -1,0 +1,25 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  int N, M;
+  cin >> N >> M;
+
+  unordered_map<string, string> memo;
+  while (N--) {
+    string site, password;
+    cin >> site >> password;
+    memo[site] = password;
+  }
+
+  while (M--) {
+    string site;
+    cin >> site;
+    cout << memo[site] << "\n";
+  }
+
+  return 0;
+}
