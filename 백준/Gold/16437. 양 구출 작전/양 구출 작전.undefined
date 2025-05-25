@@ -1,0 +1,43 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+long long dfs(auto& graph, auto& island, int now) {
+  if (graph[now].empty()) {
+    if (island[now] > 0) return island[now];
+    else return 0;
+  }
+
+  long long sum = 0;
+  sum += island[now];
+
+  for (int i = 0; i < graph[now].size(); i++) {
+    long long next = graph[now][i];
+    sum += dfs(graph, island, next);
+  }
+
+  if (sum < 0) return 0;
+  else return sum;
+}
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  int N;
+  cin >> N;
+
+  vector<vector<long long>> graph(N + 1);
+  vector<long long> island(N + 1);
+  for (int i = 2; i <= N; i++) {
+    char t;
+    long long a, p;
+    cin >> t >> a >> p;
+    graph[p].push_back(i);
+    island[i] = (t == 'S' ? a : -a);
+  }
+
+  cout << dfs(graph, island, 1);
+
+  return 0;
+}
