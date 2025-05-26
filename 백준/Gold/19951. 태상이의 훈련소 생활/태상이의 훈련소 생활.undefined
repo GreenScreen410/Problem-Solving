@@ -1,0 +1,90 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+template <typename T>
+struct LazySegmentTree {
+ private:
+  int n;
+  vector<T> tree, lazy, a;
+
+  static int left(int node) { return 2 * node + 1; }
+  static int right(int node) { return 2 * node + 2; }
+  static int mid(int l, int r) { return l + (r - l) / 2; }
+
+  void build(int node, int l, int r) {
+    if (l == r) tree[node] = a[l];
+    else {
+      build(left(node), l, mid(l, r));
+      build(right(node), mid(l, r) + 1, r);
+      tree[node] = tree[left(node)] + tree[right(node)];
+    }
+  }
+
+  void propagate(int node, int l, int r) {
+    if (lazy[node] != 0) {
+      tree[node] += (r - l + 1) * lazy[node];
+      if (l < r) {
+        lazy[left(node)] += lazy[node];
+        lazy[right(node)] += lazy[node];
+      }
+      lazy[node] = 0;
+    }
+  }
+
+  void update(int node, int l, int r, int query_l, int query_r, T value) {
+    propagate(node, l, r);
+    if (query_r < l || r < query_l) return;
+    if (query_l <= l && r <= query_r) {
+      lazy[node] += value;
+      propagate(node, l, r);
+      return;
+    }
+    update(left(node), l, mid(l, r), query_l, query_r, value);
+    update(right(node), mid(l, r) + 1, r, query_l, query_r, value);
+    tree[node] = tree[left(node)] + tree[right(node)];
+  }
+
+  T query(int node, int l, int r, int query_l, int query_r) {
+    propagate(node, l, r);
+    if (query_r < l || r < query_l) return 0;
+    if (query_l <= l && r <= query_r) return tree[node];
+    return query(left(node), l, mid(l, r), query_l, query_r) + query(right(node), mid(l, r) + 1, r, query_l, query_r);
+  }
+
+ public:
+  LazySegmentTree(const vector<T>& a) : a(a), n(a.size()), tree(4 * n), lazy(4 * n) {
+    build(0, 0, n - 1);
+  }
+
+  void update(int l, int r, T value) {
+    update(0, 0, n - 1, l, r, value);
+  }
+
+  T query(int l, int r) {
+    return query(0, 0, n - 1, l, r);
+  }
+};
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  int N, M;
+  cin >> N >> M;
+
+  vector<long long> A(N);
+  for (auto& i : A) cin >> i;
+
+  LazySegmentTree<long long> st(A);
+  while (M--) {
+    long long a, b, k;
+    cin >> a >> b >> k;
+    st.update(a - 1, b - 1, k);
+  }
+
+  for (int i = 0; i < N; i++) {
+    cout << st.query(i, i) << " ";
+  }
+
+  return 0;
+}
