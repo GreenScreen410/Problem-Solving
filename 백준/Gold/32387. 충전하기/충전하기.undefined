@@ -1,0 +1,45 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  int N, Q;
+  cin >> N >> Q;
+
+  set<int> ports;
+  for (int i = 1; i <= N; i++) ports.insert(i);
+
+  vector<int> order(N + 1);
+  int action = 0;
+  while (Q--) {
+    int t, i;
+    cin >> t >> i;
+
+    action++;
+
+    if (t == 1) {
+      auto it = ports.lower_bound(i);
+      if (it == ports.end()) {
+        cout << "-1\n";
+      } else {
+        ports.erase(it);
+        order[*it] = action;
+        cout << *it << "\n";
+      }
+    }
+
+    else {
+      if (order[i] == 0) {
+        cout << "-1\n";
+      } else {
+        cout << order[i] << "\n";
+        order[i] = 0;
+        ports.insert(i);
+      }
+    }
+  }
+
+  return 0;
+}
