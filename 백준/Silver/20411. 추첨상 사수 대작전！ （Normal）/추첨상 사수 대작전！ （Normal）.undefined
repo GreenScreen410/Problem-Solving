@@ -1,0 +1,18 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  long long m, Seed, X1, X2;
+  cin >> m >> Seed >> X1 >> X2;
+
+  for (int a = 0; a < m; a++) {
+    for (int c = 0; c < m && ((Seed - X1) * a + X2 - X1) % m == 0; c++) {
+      if ((X1 + X2) % m == (a * (Seed + X1) + 2 * c) % m) {
+        cout << a << " " << c << "\n";
+        return 0;
+      }
+    }
+  }
+
+  return 0;
+}
