@@ -1,0 +1,27 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  int T;
+  cin >> T;
+
+  for (int X = 1; X <= T; X++) {
+    int n;
+    cin >> n;
+
+    vector<long long> x(n), y(n);
+    for (auto& i : x) cin >> i;
+    for (auto& i : y) cin >> i;
+    sort(x.begin(), x.end());
+    sort(y.begin(), y.end(), greater<>());
+
+    long long result = 0;
+    for (int i = 0; i < n; i++) result += x[i] * y[i];
+    cout << "Case #" << X << ": " << result << "\n";
+  }
+
+  return 0;
+}
