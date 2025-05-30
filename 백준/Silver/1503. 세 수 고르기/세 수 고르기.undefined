@@ -1,0 +1,33 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  int N, M;
+  cin >> N >> M;
+
+  vector<int> S(1001);
+  while (M--) {
+    int x;
+    cin >> x;
+    S[x] = 1;
+  }
+
+  int min = INT_MAX;
+  for (int x = 1; x <= 1000; x++) {
+    if (S[x]) continue;
+    for (int y = x; y <= 1000; y++) {
+      if (S[y]) continue;
+      for (int z = y; z <= 1001; z++) {
+        if (S[z]) continue;
+        min = std::min(min, abs(N - x * y * z));
+      }
+    }
+  }
+
+  cout << min << "\n";
+
+  return 0;
+}
