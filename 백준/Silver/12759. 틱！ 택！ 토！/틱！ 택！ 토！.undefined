@@ -1,0 +1,41 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  int first;
+  cin >> first;
+
+  vector<vector<int>> board(3, vector<int>(3));
+  for (int i = 0; i < 9; i++) {
+    int x, y;
+    cin >> x >> y;
+    x--, y--;
+    board[x][y] = (i % 2 == 0 ? first : 3 - first);
+
+    for (int k = 0; k < 3; k++) {
+      if (board[k][0] != 0 && board[k][0] == board[k][1] && board[k][1] == board[k][2]) {
+        cout << board[k][0] << "\n";
+        return 0;
+      }
+      if (board[0][k] != 0 && board[0][k] == board[1][k] && board[1][k] == board[2][k]) {
+        cout << board[0][k] << "\n";
+        return 0;
+      }
+    }
+    if (board[0][0] != 0 && board[0][0] == board[1][1] && board[1][1] == board[2][2]) {
+      cout << board[0][0] << "\n";
+      return 0;
+    }
+    if (board[0][2] != 0 && board[0][2] == board[1][1] && board[1][1] == board[2][0]) {
+      cout << board[0][2] << "\n";
+      return 0;
+    }
+  }
+
+  cout << "0\n";
+
+  return 0;
+}
