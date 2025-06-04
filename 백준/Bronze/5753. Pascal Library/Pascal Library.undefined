@@ -1,0 +1,33 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  while (true) {
+    int N, D;
+    cin >> N >> D;
+    if (N == 0 && D == 0) break;
+
+    vector<int> check(N);
+    for (int d = 0; d < D; d++) {
+      for (int i = 0; i < N; i++) {
+        int x;
+        cin >> x;
+        check[i] += x;
+      }
+    }
+
+    bool any = false;
+    for (int i : check) {
+      if (i == D) {
+        any = true;
+        break;
+      }
+    }
+    cout << (any ? "yes\n" : "no\n");
+  }
+
+  return 0;
+}
