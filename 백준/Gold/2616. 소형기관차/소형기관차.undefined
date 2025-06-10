@@ -1,0 +1,39 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+auto prefix_sum(auto& v) {
+  vector<int> result(v.size());
+  for (int i = 1; i < v.size(); i++) {
+    result[i] = result[i - 1] + v[i];
+  }
+  return result;
+}
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  int N;
+  cin >> N;
+
+  vector<int> v(N + 1);
+  for (int i = 1; i <= N; i++) {
+    cin >> v[i];
+  }
+
+  auto ps = prefix_sum(v);
+
+  int M;
+  cin >> M;
+
+  vector<vector<int>> dp(4, vector<int>(50001));
+  for (int i = 1; i <= 3; i++) {
+    for (int j = i * M; j <= N; j++) {
+      dp[i][j] = max(dp[i][j - 1], dp[i - 1][j - M] + ps[j] - ps[j - M]);
+    }
+  }
+
+  cout << dp[3][N] << "\n";
+
+  return 0;
+}
