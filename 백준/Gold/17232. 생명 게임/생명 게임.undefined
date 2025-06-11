@@ -1,0 +1,86 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  int N, M, T;
+  cin >> N >> M >> T;
+
+  int K, a, b;
+  cin >> K >> a >> b;
+
+  vector<vector<char>> grid(N, vector<char>(M));
+  for (int i = 0; i < N; i++) {
+    for (int j = 0; j < M; j++) {
+      cin >> grid[i][j];
+    }
+  }
+
+  while (T--) {
+    vector<vector<int>> psum(N, vector<int>(M, 0));
+    for (int r = 0; r < N; ++r) {
+      for (int c = 0; c < M; ++c) {
+        int check = (grid[r][c] == '*') ? 1 : 0;
+        int x = (r > 0) ? psum[r - 1][c] : 0;
+        int y = (c > 0) ? psum[r][c - 1] : 0;
+        int z = (r > 0 && c > 0) ? psum[r - 1][c - 1] : 0;
+        psum[r][c] = check + x + y - z;
+      }
+    }
+
+    vector<vector<char>> next_grid = grid;
+
+    for (int r = 0; r < N; r++) {
+      for (int c = 0; c < M; c++) {
+        int r1 = max(0, r - K);
+        int c1 = max(0, c - K);
+        int r2 = min(N - 1, r + K);
+        int c2 = min(M - 1, c + K);
+
+        int count = 0;
+        if (r1 <= r2 && c1 <= c2) {
+          int sum_at_r2c2 = psum[r2][c2];
+
+          int a = (r1 > 0) ? psum[r1 - 1][c2] : 0;
+          int b = (c1 > 0) ? psum[r2][c1 - 1] : 0;
+          int c = (r1 > 0 && c1 > 0) ? psum[r1 - 1][c1 - 1] : 0;
+
+          count = sum_at_r2c2 - a - b + c;
+        }
+
+        int live_neighbors = count;
+        if (grid[r][c] == '*') {
+          live_neighbors--;
+        }
+
+        if (grid[r][c] == '*') {
+          if (live_neighbors < a) {
+            next_grid[r][c] = '.';
+          } else if (live_neighbors > b) {
+            next_grid[r][c] = '.';
+          } else {
+            next_grid[r][c] = '*';
+          }
+        } else {
+          if (live_neighbors > a && live_neighbors <= b) {
+            next_grid[r][c] = '*';
+          } else {
+            next_grid[r][c] = '.';
+          }
+        }
+      }
+    }
+    grid = next_grid;
+  }
+
+  for (int i = 0; i < N; i++) {
+    for (int j = 0; j < M; j++) {
+      cout << grid[i][j];
+    }
+    cout << "\n";
+  }
+
+  return 0;
+}
