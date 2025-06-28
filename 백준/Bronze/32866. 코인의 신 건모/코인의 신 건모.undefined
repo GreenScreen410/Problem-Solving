@@ -1,0 +1,12 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  double N, X;
+  cin >> N >> X;
+  
+  cout << fixed << setprecision(6);
+  cout << (100 / (100 - X) - 1) * 100;
+
+  return 0;
+}
