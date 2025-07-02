@@ -1,0 +1,23 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  int n, k;
+  cin >> n >> k;
+  
+  unordered_map<string, int> m;
+  while (n--) {
+    string C;
+    cin >> C;
+    m[C]++;
+  }
+  
+  for (auto& [id, x] : m) {
+    if (x % k != 0) {
+      cout << id << "\n";
+      break;
+    }
+  }
+  
+  return 0;
+}
