@@ -1,0 +1,34 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+  
+  unordered_map<int, int> m;
+  while (true) {
+    int N, M;
+    cin >> N >> M;
+    
+    if (N == 0 && M == 0) break;
+    
+    m.clear();
+    
+    while (N--) {
+      int cd;
+      cin >> cd;
+      m[cd]++;
+    }
+    
+    int count = 0;
+    while (M--) {
+      int cd;
+      cin >> cd;
+      if (m[cd]) count++;
+    }
+    
+    cout << count << "\n";
+  }
+  
+  return 0;
+}
