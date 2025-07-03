@@ -1,0 +1,23 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  unordered_map<string, int> m;
+  string id;
+  while (cin >> id) {
+    m[id]++;
+  }
+
+  vector<string> result;
+  for (auto p : m) {
+    if (p.second > 1) result.push_back(p.first);
+  }
+  sort(result.begin(), result.end());
+
+  for (auto s : result) cout << s << "\n";
+
+  return 0;
+}
