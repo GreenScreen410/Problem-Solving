@@ -1,0 +1,31 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  int n;
+  cin >> n;
+
+  unordered_map<string, int> used;
+  vector<string> result;
+
+  while (n--) {
+    int m;
+    cin >> m;
+
+    bool found = false;
+    while (m--) {
+      string app;
+      cin >> app;
+
+      if (!used[app] && !found) {
+        result.push_back(app);
+        used[app]++;
+        found = true;
+      }
+    }
+  }
+  
+  for (auto s : result) cout << s << " ";
+  
+  return 0;
+}
