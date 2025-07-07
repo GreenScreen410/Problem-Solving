@@ -1,0 +1,28 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  int T;
+  cin >> T;
+  
+  while (T--) {
+    int N;
+    cin >> N;
+    
+    unordered_map<string, int> m;
+    while (N--) {
+      string name;
+      int id;
+      cin >> name >> id;
+      m[name] = (m[name] == 0 ? id : min(m[name], id));
+    }
+    
+    vector<int> result;
+    for (auto [name, id] : m) result.push_back(id);
+    sort(result.begin(), result.end());
+    for (int i : result) cout << i << " ";
+    cout << "\n";
+  }
+  
+  return 0;
+}
