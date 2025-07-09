@@ -1,0 +1,31 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+  
+  int N;
+  cin >> N;
+  
+  for (int x = 1; x <= N; x++) {
+    int G;
+    cin >> G;
+    
+    unordered_map<int, int> m;
+    while (G--) {
+      int C;
+      cin >> C;
+      m[C]++;
+    }
+    
+    for (auto [C, check] : m) {
+      if (check == 1) {
+        cout << "Case #" << x << ": " << C << "\n";
+        break;
+      }
+    }
+  }
+  
+  return 0;
+}
