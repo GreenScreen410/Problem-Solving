@@ -1,0 +1,33 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  int c;
+  cin >> c;
+  while (c--) {
+    set<string> result;
+    vector<tuple<string, string, int, int>> games(16);
+    for (int i = 0; i < 16; i++) {
+      string t1, t2;
+      int g1, g2;
+      cin >> t1 >> t2 >> g1 >> g2;
+      games[i] = {t1, t2, g1, g2};
+      result.insert(t1);
+      result.insert(t2);
+    }
+    
+    while (result.size() > 1) {
+      set<string> next;
+      for (auto [t1, t2, g1, g2] : games) {
+        if (result.count(t1) && result.count(t2)) {
+          next.insert(g1 > g2 ? t1 : t2);
+        }
+      }
+      result = next;
+    }
+    
+    cout << *result.begin() << "\n";
+  }
+  
+  return 0;
+}
