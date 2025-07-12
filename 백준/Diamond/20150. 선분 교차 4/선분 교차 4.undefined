@@ -1,0 +1,107 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+long long now;
+
+struct Point {
+  long long x, y;
+  auto operator<=>(const Point&) const = default;
+};
+
+struct Line {
+  Point a, b;
+  int index;
+
+  long double convert() const {
+    return (long double)(b.y - a.y) * (now - a.x) / (b.x - a.x) + a.y;
+  }
+
+  bool operator<(const Line& other) const {
+    long double diff = convert() - other.convert();
+    if (abs(diff) > 1e-9) return diff < 0;
+    return index < other.index;
+  }
+};
+
+struct Event {
+  long long x, y;
+  int type, index;
+
+  auto operator<=>(const Event& other) const {
+    if (x != other.x) return x <=> other.x;
+    if (type != other.type) return type <=> other.type;
+    return y <=> other.y;
+  }
+};
+
+int ccw(const Point& a, const Point& b, const Point& c) {
+  long double result = 1.0L * (b.x - a.x) * (c.y - a.y) - 1.0L * (b.y - a.y) * (c.x - a.x);
+  if (abs(result) > 1e-9) return result > 0 ? 1 : -1;
+  return 0;
+}
+
+bool line_intersect(const Line& l1, const Line& l2) {
+  int t1 = ccw(l1.a, l1.b, l2.a) * ccw(l1.a, l1.b, l2.b);
+  int t2 = ccw(l2.a, l2.b, l1.a) * ccw(l2.a, l2.b, l1.b);
+  if (t1 == 0 && t2 == 0) return l1.a <= l2.b && l2.a <= l1.b;
+  return t1 <= 0 && t2 <= 0;
+}
+
+bool shamos_hoey(const vector<Line>& lines) {
+  vector<Event> events;
+  for (const auto& l : lines) {
+    events.push_back({l.a.x, l.a.y, 0, l.index});
+    events.push_back({l.b.x, l.b.y, 1, l.index});
+  }
+  sort(events.begin(), events.end());
+
+  multiset<Line> active_lines;
+  for (const auto& [x, y, type, index] : events) {
+    now = x;
+    const Line& current_line = lines[index];
+
+    if (type == 0) {
+      auto it = active_lines.insert(current_line);
+      if (next(it) != active_lines.end() && line_intersect(*it, *next(it))) return true;
+      if (it != active_lines.begin() && line_intersect(*it, *prev(it))) return true;
+    } else {
+      auto it = active_lines.find(current_line);
+      if (it != active_lines.end()) {
+        if (it != active_lines.begin() && next(it) != active_lines.end() && line_intersect(*prev(it), *next(it))) return true;
+        active_lines.erase(it);
+      }
+    }
+  }
+  return false;
+}
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  int N;
+  cin >> N;
+
+  vector<Line> v(N);
+  const long long k = 1e9 + 7;
+
+  for (int i = 0; i < N; i++) {
+    long long t;
+    cin >> v[i].a.x >> v[i].a.y >> v[i].b.x >> v[i].b.y;
+    v[i].index = i;
+
+    t = v[i].a.x + k * v[i].a.y;
+    v[i].a.y -= k * v[i].a.x;
+    v[i].a.x = t;
+    t = v[i].b.x + k * v[i].b.y;
+    v[i].b.y -= k * v[i].b.x;
+    v[i].b.x = t;
+
+    if (v[i].a.x > v[i].b.x) swap(v[i].a, v[i].b);
+    else if (v[i].a.x == v[i].b.x && v[i].a.y > v[i].b.y) swap(v[i].a, v[i].b);
+  }
+
+  cout << shamos_hoey(v) << "\n";
+
+  return 0;
+}
