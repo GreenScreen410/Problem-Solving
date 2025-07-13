@@ -1,0 +1,73 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  int N;
+  cin >> N;
+
+  unordered_map<string, int> man_to_id, woman_to_id;
+  vector<string> id_to_man(N + 1), id_to_woman(N + 1);
+  string name;
+
+  for (int i = 1; i <= N; i++) {
+    cin >> name;
+    man_to_id[name] = i;
+    id_to_man[i] = name;
+  }
+
+  for (int i = 1; i <= N; i++) {
+    cin >> name;
+    woman_to_id[name] = i;
+    id_to_woman[i] = name;
+  }
+
+  vector<vector<int>> A(N + 1, vector<int>(N + 1));
+  vector<vector<int>> B(N + 1, vector<int>(N + 1));
+
+  for (int i = 0; i < N; i++) {
+    cin >> name;
+    int man_id = man_to_id[name];
+    for (int j = 1; j <= N; j++) {
+      cin >> name;
+      A[man_id][j] = woman_to_id[name];
+    }
+  }
+
+  for (int i = 0; i < N; i++) {
+    cin >> name;
+    int woman_id = woman_to_id[name];
+    for (int j = 1; j <= N; j++) {
+      cin >> name;
+      B[woman_id][man_to_id[name]] = j;
+    }
+  }
+
+  queue<int> q;
+  for (int i = 1; i <= N; i++) q.push(i);
+
+  vector<int> y(N + 1);
+  vector<int> index(N + 1);
+  while (!q.empty()) {
+    int man = q.front();
+    q.pop();
+
+    int woman = A[man][++index[man]];
+    if (y[woman] == 0) {
+      y[woman] = man;
+    } else if (B[woman][man] < B[woman][y[woman]]) {
+      q.push(y[woman]);
+      y[woman] = man;
+    } else {
+      q.push(man);
+    }
+  }
+
+  for (int i = 1; i <= N; i++) {
+    cout << id_to_man[y[i]] << " " << id_to_woman[i] << "\n";
+  }
+
+  return 0;
+}
