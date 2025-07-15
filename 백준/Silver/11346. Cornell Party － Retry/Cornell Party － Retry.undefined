@@ -1,0 +1,36 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  int T;
+  cin >> T;
+
+  while (T--) {
+    int N, M;
+    cin >> N >> M;
+
+    unordered_map<string, int> m;
+    while (N--) {
+      string name;
+      cin >> name;
+      m[name]++;
+    }
+    while (M--) {
+      string name;
+      cin >> name;
+      m[name]++;
+    }
+
+    int count = 0;
+    for (const auto& [name, x] : m) {
+      if (x >= 1) count++;
+    }
+
+    cout << count << "\n";
+  }
+
+  return 0;
+}
