@@ -1,0 +1,23 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  int n;
+  cin >> n;
+  
+  unordered_map<int, int> m;
+  while (n--) {
+    int a;
+    cin >> a;
+    m[a]++;
+  }
+  
+  int count = 0;
+  for (auto [a, x] : m) {
+    if (x) count++;
+  }
+  
+  cout << count << "\n";
+  
+  return 0;
+}
