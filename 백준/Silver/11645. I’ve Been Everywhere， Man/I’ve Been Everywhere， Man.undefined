@@ -1,0 +1,28 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  int T;
+  cin >> T;
+  
+  while (T--) {
+    int n;
+    cin >> n;
+    
+    unordered_map<string, int> m;
+    while (n--) {
+      string city;
+      cin >> city;
+      m[city]++;
+    }
+    
+    int result = 0;
+    for (auto [city, x] : m) {
+      result++;
+    }
+    
+    cout << result << "\n";
+  }
+  
+  return 0;
+}
