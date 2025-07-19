@@ -1,0 +1,28 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  int a, b;
+  cin >> a >> b;
+  
+  set<int> A, B;
+  while (a--) {
+    int n;
+    cin >> n;
+    A.insert(n);
+  }
+  while (b--) {
+    int n;
+    cin >> n;
+    B.insert(n);
+  }
+  
+  set<int> A_copy = A;
+  set<int> B_copy = B;
+  for (auto i : A_copy) B.erase(i);
+  for (auto i : B_copy) A.erase(i);
+  
+  cout << A.size() + B.size() << "\n";
+  
+  return 0;
+}
