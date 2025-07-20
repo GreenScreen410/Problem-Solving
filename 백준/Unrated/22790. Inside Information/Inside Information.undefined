@@ -1,0 +1,86 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Point {
+  long long x, y;
+  auto operator<=>(const Point&) const = default;
+};
+
+auto ccw(auto& a, auto& b, auto& c) {
+  return (a.x * b.y + b.x * c.y + c.x * a.y) - (a.y * b.x + b.y * c.x + c.y * a.x);
+}
+
+bool is_inside(const vector<Point>& hull, const Point& p) {
+  int n = hull.size();
+  if (ccw(hull[0], hull[1], p) < 0 || ccw(hull[0], hull[n - 1], p) > 0) return false;
+  int lo = 1, hi = n - 1;
+  while (lo + 1 < hi) {
+    int mid = (lo + hi) / 2;
+    if (ccw(hull[0], hull[mid], p) > 0) lo = mid;
+    else hi = mid;
+  }
+  return ccw(hull[lo], hull[hi], p) >= 0;
+}
+
+void replace_dash(string& s) {
+  const vector<pair<string, string>> reps = {
+      {"\xE2\x80\x93", "-"},
+      {"\xE2\x80\x94", "-"},
+      {"\xE2\x88\x92", "-"},
+      {"\xEF\xBC\x8D", "-"}};
+  for (auto& [from, to] : reps) {
+    int pos = 0;
+    while ((pos = s.find(from, pos)) != string::npos) {
+      s.replace(pos, from.size(), to);
+    }
+  }
+}
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  int set_num = 1;
+  while (true) {
+    int n, m;
+    cin >> n >> m;
+
+    if (n == 0 && m == 0) break;
+
+    vector<Point> polygon(n);
+    for (auto& p : polygon) {
+      string sx, sy;
+      cin >> sx >> sy;
+      replace_dash(sx);
+      replace_dash(sy);
+      p.x = stoll(sx);
+      p.y = stoll(sy);
+    }
+
+    long long area = 0;
+    for (int i = 0; i < n; i++) {
+      area += polygon[i].x * polygon[(i + 1) % n].y;
+      area -= polygon[i].y * polygon[(i + 1) % n].x;
+    }
+    if (area < 0) reverse(polygon.begin() + 1, polygon.end());
+
+    vector<Point> points(m);
+    for (auto& p : points) {
+      string sx, sy;
+      cin >> sx >> sy;
+      replace_dash(sx);
+      replace_dash(sy);
+      p.x = stoll(sx);
+      p.y = stoll(sy);
+    }
+
+    int count = 0;
+    for (const auto& p : points) {
+      if (is_inside(polygon, p)) count++;
+    }
+
+    cout << "Data set " << set_num++ << ": " << count << "\n";
+  }
+
+  return 0;
+}
