@@ -1,0 +1,120 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Point {
+  long long x, y;
+  auto operator<=>(const Point&) const = default;
+};
+
+auto ccw(auto& a, auto& b, auto& c) {
+  return (a.x * b.y + b.x * c.y + c.x * a.y) - (a.y * b.x + b.y * c.x + c.y * a.x);
+}
+
+vector<Point> convex_hull(vector<Point> points) {
+  if (points.size() <= 2) return points;
+  sort(points.begin(), points.end());
+  sort(points.begin() + 1, points.end(), [p = points.front()](auto& a, auto& b) {
+    long long value = ccw(p, a, b);
+    if (value != 0) return value > 0;
+    return (a.x - p.x) * (a.x - p.x) + (a.y - p.y) * (a.y - p.y) < (b.x - p.x) * (b.x - p.x) + (b.y - p.y) * (b.y - p.y);
+  });
+
+  vector<Point> hull;
+  for (auto p : points) {
+    while (hull.size() >= 2 && ccw(end(hull)[-2], hull.back(), p) <= 0) hull.pop_back();
+    hull.push_back(p);
+  }
+
+  return hull;
+}
+
+bool is_inside(const vector<Point>& hull, const Point& p) {
+  if (hull.size() < 3) return false;
+  if (ccw(hull[0], hull[1], p) < 0) return false;
+  if (ccw(hull[0], hull.back(), p) > 0) return false;
+
+  int lo = 1, hi = hull.size() - 2;
+  int idx = 1;
+  while (lo <= hi) {
+    int mid = (lo + hi) / 2;
+    if (ccw(hull[0], hull[mid], p) > 0) {
+      idx = mid;
+      lo = mid + 1;
+    } else {
+      hi = mid - 1;
+    }
+  }
+  return ccw(hull[idx], hull[idx + 1], p) >= 0;
+}
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  int N, M;
+  cin >> N >> M;
+
+  vector<Point> missiles(N), shields(M);
+  for (auto& [x, y] : missiles) cin >> x >> y;
+  for (auto& [x, y] : shields) cin >> x >> y;
+
+  vector<Point> hull = convex_hull(missiles);
+
+  if (hull.size() < 3) {
+    if (hull.size() <= 1) {
+      long long answer = hull.size();
+      if (answer == 1) {
+        for (const auto& shield : shields) {
+          if (shield.x == hull[0].x && shield.y == hull[0].y) {
+            answer = 0;
+            break;
+          }
+        }
+      }
+      cout << answer << "\n";
+    }
+
+    else if (hull.size() == 2) {
+      Point p1 = hull[0];
+      Point p2 = hull[1];
+      long long dx = abs(p1.x - p2.x);
+      long long dy = abs(p1.y - p2.y);
+      long long total_points = gcd(dx, dy) + 1;
+
+      long long shielded = 0;
+      for (const auto& shield : shields) {
+        if (ccw(p1, p2, shield) == 0) {
+          if (min(p1.x, p2.x) <= shield.x && shield.x <= max(p1.x, p2.x) && min(p1.y, p2.y) <= shield.y && shield.y <= max(p1.y, p2.y)) {
+            shielded++;
+          }
+        }
+      }
+      cout << total_points - shielded << "\n";
+    }
+  }
+
+  else {
+    long long area = 0;
+    for (int i = 0; i < hull.size(); i++) {
+      area += hull[i].x * hull[(i + 1) % hull.size()].y;
+      area -= hull[i].y * hull[(i + 1) % hull.size()].x;
+    }
+    area = abs(area);
+
+    long long boundary = 0;
+    for (int i = 0; i < hull.size(); i++) {
+      long long dx = abs(hull[i].x - hull[(i + 1) % hull.size()].x);
+      long long dy = abs(hull[i].y - hull[(i + 1) % hull.size()].y);
+      boundary += gcd(dx, dy);
+    }
+
+    long long shielded = 0;
+    for (const auto& shield : shields) {
+      if (is_inside(hull, shield)) shielded++;
+    }
+
+    cout << (area - boundary + 2) / 2 + boundary - shielded << "\n";
+  }
+
+  return 0;
+}
