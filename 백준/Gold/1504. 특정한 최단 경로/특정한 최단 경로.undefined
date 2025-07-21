@@ -1,0 +1,56 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Node {
+  long long w, v;
+  auto operator<=>(const Node&) const = default;
+};
+
+auto dijkstra(auto& graph, int K) {
+  priority_queue<Node, vector<Node>, greater<>> pq;
+  vector<long long> dist(graph.size() + 1, INT_MAX);
+  dist[K] = 0;
+  pq.push({dist[K], K});
+  
+  while (!pq.empty()) {
+    auto now = pq.top();
+    pq.pop();
+    if (dist[now.v] != now.w) continue;
+    for (auto next : graph[now.v]) {
+      if (dist[next.v] <= dist[now.v] + next.w) continue;
+      dist[next.v] = dist[now.v] + next.w;
+      pq.push({dist[next.v], next.v});
+    }
+  }
+  
+  return dist;
+}
+
+int main() {
+  int N, E;
+  cin >> N >> E;
+  
+  vector<vector<Node>> graph(N + 1);
+  while (E--) {
+    int u, v, w;
+    cin >> u >> v >> w;
+    graph[u].push_back({w, v});
+    graph[v].push_back({w, u});
+  }
+  
+  int v1, v2;
+  cin >> v1 >> v2;
+  
+  auto dist_from_1 = dijkstra(graph, 1);
+  auto dist_from_v1 = dijkstra(graph, v1);
+  auto dist_from_v2 = dijkstra(graph, v2);
+  
+  long long path1 = dist_from_1[v1] + dist_from_v1[v2] + dist_from_v2[N];
+  long long path2 = dist_from_1[v2] + dist_from_v2[v1] + dist_from_v1[N];
+  long long result = min(path1, path2);
+  
+  if (result >= INT_MAX) cout << -1 << "\n";
+  else cout << result << "\n";
+  
+  return 0;
+}
