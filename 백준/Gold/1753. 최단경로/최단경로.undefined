@@ -1,0 +1,50 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Node {
+  int w, v;
+  auto operator<=>(const Node&) const = default;
+};
+
+auto dijkstra(auto& graph, auto& dist, auto& pq, int K) {
+  dist[K] = 0;
+  pq.push({dist[K], K});
+  
+  while (!pq.empty()) {
+    auto now = pq.top();
+    pq.pop();
+    if (dist[now.v] != now.w) continue;
+    for (auto next : graph[now.v]) {
+      if (dist[next.v] <= dist[now.v] + next.w) continue;
+      dist[next.v] = dist[now.v] + next.w;
+      pq.push({dist[next.v], next.v});
+    }
+  }
+}
+
+int main() {
+  int V, E;
+  cin >> V >> E;
+  
+  int K;
+  cin >> K;
+  
+  vector<vector<Node>> graph(V + 1);
+  while (E--) {
+    int u, v, w;
+    cin >> u >> v >> w;
+    graph[u].push_back({w, v});
+  }
+ 
+  priority_queue<Node, vector<Node>, greater<>> pq;
+  vector<int> dist(V + 1, INT_MAX);
+  
+  dijkstra(graph, dist, pq, K);
+  
+  for (int i = 1; i <= V; i++) {
+    if (dist[i] == INT_MAX) cout << "INF\n";
+    else cout << dist[i] << "\n";
+  }
+  
+  return 0;
+}
