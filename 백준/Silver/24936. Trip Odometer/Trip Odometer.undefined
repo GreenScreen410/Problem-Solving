@@ -1,0 +1,24 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+  
+  int N;
+  cin >> N;
+  
+  vector<int> d(N);
+  for (int& i : d) cin >> i;
+  
+  long long result = 0;
+  for (int i : d) result += i;
+  
+  set<long long> s;
+  for (int i = 0; i < N; i++) s.insert(result - d[i]);
+  
+  cout << s.size() << "\n";
+  for (auto i : s) cout << i << " ";
+  
+  return 0;
+}
