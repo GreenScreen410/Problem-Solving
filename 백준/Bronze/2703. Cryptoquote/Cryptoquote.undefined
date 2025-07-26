@@ -1,0 +1,29 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  int T;
+  cin >> T;
+  cin.ignore();
+  
+  while (T--) {
+    string line;
+    getline(cin, line);
+
+    unordered_map<char, char> m;
+    for (int i = 0; i < 26; i++) {
+      char c;
+      cin >> c;
+      m['A' + i] = c;
+    }
+    cin.ignore();
+    
+    for (char c : line) {
+      if (m.count(c)) cout << m[c];
+      else cout << c;
+    }
+    cout << "\n";
+  }
+
+  return 0;
+}
