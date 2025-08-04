@@ -1,0 +1,31 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+  
+  int N, C;
+  cin >> N >> C;
+  
+  map<int, pair<int, int>> m;
+  vector<int> v;
+  for (int i = 0; i < N; i++) {
+    int x;
+    cin >> x;
+    
+    v.push_back(x);
+    
+    if (m.find(x) == m.end()) m[x] = {1, i};
+    else m[x].first++;
+  }
+  
+  sort(v.begin(), v.end(), [&](int a, int b) {
+    if (m[a].first != m[b].first) return m[a].first > m[b].first;
+    return m[a].second < m[b].second;
+  });
+  
+  for (int x : v) cout << x << " ";
+  
+  return 0;
+}
