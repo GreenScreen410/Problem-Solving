@@ -1,0 +1,36 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  int N;
+  cin >> N;
+
+  unordered_map<string, int> m;
+  while (N--) {
+    int s, t;
+    cin >> s >> t;
+    while (t--) {
+      string a;
+      cin >> a;
+      m[a]++;
+    }
+  }
+  
+  string result;
+  int best = -1;
+  bool tie = false;
+  for (auto& [a, x] : m) {
+    if (x > best) {
+      best = x;
+      result = a;
+      tie = false;
+    } else if (x == best) {
+      tie = true;
+    }
+  }
+
+  if (tie) cout << -1 << "\n";
+  else cout << result << "\n";
+
+  return 0;
+}
