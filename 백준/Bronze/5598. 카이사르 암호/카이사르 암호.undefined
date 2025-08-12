@@ -1,0 +1,20 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  unordered_map<char, char> m;
+  for (int i = 0; i < 23; i++) {
+    m['D' + i] = 'A' + i;
+  }
+  m['A'] = 'X';
+  m['B'] = 'Y';
+  m['C'] = 'Z';
+  
+  string word;
+  cin >> word;
+  
+  for (char c : word) cout << m[c];
+  cout << "\n";
+  
+  return 0;
+}
