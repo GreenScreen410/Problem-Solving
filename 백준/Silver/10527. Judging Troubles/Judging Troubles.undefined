@@ -1,0 +1,30 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  int n;
+  cin >> n;
+  
+  unordered_map<string, int> DOMjudge, Kattis;
+  for (int i = 0; i < n; i++) {
+    string result;
+    cin >> result;
+    DOMjudge[result]++;
+  }
+  for (int i = 0; i < n; i++) {
+    string result;
+    cin >> result;
+    Kattis[result]++;
+  }
+  
+  int count = 0;
+  for (auto const& [result, x] : DOMjudge) {
+    if (Kattis.count(result)) {
+      count += min(x, Kattis[result]);
+    }
+  }
+
+  cout << count << "\n";
+  
+  return 0;
+}
