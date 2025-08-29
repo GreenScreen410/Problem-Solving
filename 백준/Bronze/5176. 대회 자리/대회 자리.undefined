@@ -1,0 +1,28 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  int K;
+  cin >> K;
+  
+  while (K--) {
+    int P, M;
+    cin >> P >> M;
+    
+    unordered_map<int, int> m;
+    while (P--) {
+      int seat;
+      cin >> seat;
+      m[seat]++;
+    }
+
+    int count = 0;    
+    for (auto& [seat, x] : m) {
+      if (x > 1) count += x - 1;
+    }
+    
+    cout << count << "\n";
+  }
+  
+  return 0;
+}
