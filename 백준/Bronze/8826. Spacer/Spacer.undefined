@@ -1,0 +1,30 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  int Z;
+  cin >> Z;
+
+  while (Z--) {
+    int n;
+    cin >> n;
+
+    int x = 0, y = 0;
+    while (n--) {
+      char c;
+      cin >> c;
+
+      if (c == 'N') x++;
+      else if (c == 'S') x--;
+      else if (c == 'E') y++;
+      else if (c == 'W') y--;
+    }
+
+    cout << abs(x) + abs(y) << "\n";
+  }
+
+  return 0;
+}
