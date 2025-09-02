@@ -1,0 +1,75 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+template <typename T>
+struct Point {
+  T x, y;
+  auto operator<=>(const Point<T>&) const = default;
+
+  T ccw(const Point<T>& b, const Point<T>& c) const {
+    return (b.x - x) * (c.y - y) - (b.y - y) * (c.x - x);
+  }
+
+  T dist2(const Point<T>& other) const {
+    return (x - other.x) * (x - other.x) + (y - other.y) * (y - other.y);
+  }
+
+  long double dist(const Point<T>& other) const {
+    return sqrt(dist2(other));
+  }
+};
+
+template <typename T>
+vector<Point<T>> convex_hull(vector<Point<T>> points) {
+  sort(points.begin(), points.end());
+
+  vector<Point<T>> lower, upper;
+  for (const auto& p : points) {
+    while (lower.size() >= 2 && static_cast<long double>(end(lower)[-2].ccw(lower.back(), p)) <= 1e-9L) lower.pop_back();
+    lower.push_back(p);
+  }
+  for (const auto& p : views::reverse(points)) {
+    while (upper.size() >= 2 && static_cast<long double>(end(upper)[-2].ccw(upper.back(), p)) <= 1e-9L) upper.pop_back();
+    upper.push_back(p);
+  }
+
+  lower.pop_back();
+  lower.insert(lower.end(), upper.begin(), upper.end() - 1);
+
+  return lower;
+}
+
+static inline double octile_edge_len(const Point<long long>& a, const Point<long long>& b) {
+  long long dx = llabs(b.x - a.x);
+  long long dy = llabs(b.y - a.y);
+  long long dmin = dx < dy ? dx : dy;
+  long long dmax = dx + dy - dmin;
+  return dmin * sqrt(2.0) + (dmax - dmin);
+}
+
+double perimeter_octile(const vector<Point<long long>>& hull) {
+  int n = (int)hull.size();
+  if (n <= 1) return 0.0;
+  if (n == 2) return 2.0 * octile_edge_len(hull[0], hull[1]);
+  double total = 0.0;
+  for (int i = 0; i < n; ++i) {
+    total += octile_edge_len(hull[i], hull[(i + 1) % n]);
+  }
+  return total;
+}
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  int N;
+  if (!(cin >> N)) return 0;
+
+  vector<Point<long long>> points(N);
+  for (auto& p : points) cin >> p.x >> p.y;
+
+  auto hull = convex_hull(points);
+  cout << fixed << setprecision(6) << perimeter_octile(hull) + 4.0 * sqrt(2.0) << "\n";
+
+  return 0;
+}
