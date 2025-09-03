@@ -1,0 +1,36 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  int A, B, G;
+  cin >> A >> B >> G;
+
+  unordered_map<string, int> a, b;
+  while (A--) {
+    string name;
+    cin >> name;
+    a[name]++;
+  }
+  while (B--) {
+    string name;
+    cin >> name;
+    b[name]++;
+  }
+
+  int a_score = 0, b_score = 0;
+  while (G--) {
+    string name;
+    cin >> name;
+    if (a[name]) a_score++;
+    else b_score++;
+  }
+
+  if (a_score > b_score) cout << "A" << "\n";
+  else if (a_score < b_score) cout << "B" << "\n";
+  else cout << "TIE" << "\n";
+
+  return 0;
+}
