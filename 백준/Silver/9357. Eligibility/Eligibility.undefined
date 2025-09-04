@@ -1,0 +1,40 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(NULL);
+
+  int T;
+  cin >> T;
+  
+  for (int t = 1; t <= T; t++) {
+    int N;
+    cin >> N;
+    
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    unordered_map<string, set<int>> m;
+    while (N--) {
+      string line;
+      getline(cin, line);
+      
+      size_t last_space_pos = line.rfind(" ");
+      string name = line.substr(0, last_space_pos);
+      int year = stoi(line.substr(last_space_pos + 1));
+
+      m[name].insert(year);
+    }
+
+    vector<string> result;
+    for (auto const& [name, years] : m) {
+      if (years.size() < 5) result.push_back(name);
+    }
+    sort(result.begin(), result.end());
+
+    cout << "Case #" << t << ":" << "\n";
+    for (auto const& s : result) cout << s << "\n";
+  }
+  
+  return 0;
+}
