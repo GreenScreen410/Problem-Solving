@@ -1,0 +1,15 @@
+#include "aplusb.h"
+#include <vector>
+
+std::vector<int> stored_A;
+std::vector<int> stored_B;
+
+void initialize(std::vector<int> A, std::vector<int> B) {
+  stored_A = A;
+  stored_B = B;
+  return;
+}
+
+int answer_question(int i, int j) {
+  return stored_A[i] + stored_B[j];
+}
