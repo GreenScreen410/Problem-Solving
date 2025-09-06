@@ -1,0 +1,30 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+  
+  int M;
+  cin >> M;
+  
+  unordered_map<int, int> m;
+  vector<int> v;
+  while (M--) {
+    int T, N;
+    cin >> T >> N;
+    
+    if (m[N] == 0) {
+      m[N] = T;
+    } else {
+      m[N] -= T;
+      v.push_back(N);
+    }
+  }
+  
+  for (int N : v) {
+    cout << N << " " << abs(m[N]) << "\n";
+  }
+  
+  return 0;
+}
