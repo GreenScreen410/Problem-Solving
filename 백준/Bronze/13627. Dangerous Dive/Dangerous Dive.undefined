@@ -1,0 +1,29 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(NULL);
+
+  int N, R;
+  cin >> N >> R;
+
+  vector<int> v(N + 1);
+  while (R--) {
+    int id;
+    cin >> id;
+    v[id] = 1;
+  }
+  
+  bool missing = false;
+  for (int i = 1; i <= N; i++) {
+    if (!v[i]) {
+      cout << i << " ";
+      missing = true;
+    }
+  }
+
+  if (!missing) cout << "*\n";
+
+  return 0;
+}
