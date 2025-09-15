@@ -1,0 +1,12 @@
+#include <iostream>
+using namespace std;
+
+int main() {
+  int N;
+  cin >> N;
+
+  if (N % 2 == 1) cout << "1\n";
+  else cout << "2\n";
+
+  return 0;
+}
