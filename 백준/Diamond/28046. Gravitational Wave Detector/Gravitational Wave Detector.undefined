@@ -1,0 +1,179 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Points {
+  long long x, y;
+  bool operator==(const Points& o) const { return x == o.x && y == o.y; }
+  bool operator!=(const Points& o) const { return !(*this == o); }
+  bool operator<(const Points& o) const { return x < o.x || (x == o.x && y < o.y); }
+  Points operator+(const Points& o) const { return {x + o.x, y + o.y}; }
+  Points operator-(const Points& o) const { return {x - o.x, y - o.y}; }
+  Points operator-() const { return {-x, -y}; }
+};
+
+static inline long long cross(const Points& a, const Points& b) {
+  return a.x * b.y - a.y * b.x;
+}
+static inline long long cross(const Points& a, const Points& b, const Points& c) {
+  return cross(b - a, c - a);
+}
+static inline long long dot(const Points& a, const Points& b) {
+  return a.x * b.x + a.y * b.y;
+}
+
+static void rotate_to_lowest(vector<Points>& poly) {
+  if (poly.empty()) return;
+  int n = (int)poly.size();
+  int idx = 0;
+  for (int i = 1; i < n; i++) {
+    if (poly[i] < poly[idx]) idx = i;
+  }
+  rotate(poly.begin(), poly.begin() + idx, poly.end());
+}
+
+static vector<Points> cleanup_convex(vector<Points> v) {
+  vector<Points> u;
+  u.reserve(v.size());
+  for (const Points& p : v) {
+    if (!u.empty() && p == u.back()) continue;
+    while (u.size() >= 2 && cross(u[u.size() - 2], u.back(), p) == 0) u.pop_back();
+    u.push_back(p);
+  }
+  while (u.size() >= 3 && cross(u[u.size() - 2], u.back(), u[0]) == 0) u.pop_back();
+  if (u.size() >= 3 && cross(u.back(), u[0], u[1]) == 0) u.erase(u.begin());
+  return u;
+}
+
+static vector<Points> minkowski_sum(vector<Points> A, vector<Points> B) {
+  rotate_to_lowest(A);
+  rotate_to_lowest(B);
+  int n = (int)A.size(), m = (int)B.size();
+  vector<Points> eA(n), eB(m);
+  for (int i = 0; i < n; ++i) eA[i] = A[(i + 1) % n] - A[i];
+  for (int j = 0; j < m; ++j) eB[j] = B[(j + 1) % m] - B[j];
+
+  vector<Points> R;
+  R.reserve(n + m + 1);
+  R.push_back(A[0] + B[0]);
+  int i = 0, j = 0;
+  while (i < n || j < m) {
+    Points step;
+    if (i < n && j < m) {
+      long long z = cross(eA[i], eB[j]);
+      if (z > 0) step = eA[i++];
+      else if (z < 0) step = eB[j++];
+      else {
+        step = {eA[i].x + eB[j].x, eA[i].y + eB[j].y};
+        ++i;
+        ++j;
+      }
+    } else if (i < n) step = eA[i++];
+    else step = eB[j++];
+    R.push_back(R.back() + step);
+  }
+  
+  if (!R.empty()) R.pop_back();
+  R = cleanup_convex(R);
+  rotate_to_lowest(R);
+
+  return R;
+}
+
+static inline bool on_segment(const Points& a, const Points& b, const Points& c) {
+  Points ac = c - a, ab = b - a;
+  long long d = dot(ab, ab);
+  long long t = dot(ac, ab);
+  return t >= 0 && t <= d;
+}
+
+static bool in_convex(const vector<Points>& poly, const Points& q) {
+  int n = (int)poly.size();
+  if (n == 0) return false;
+  if (n == 1) return q == poly[0];
+  if (n == 2) {
+    if (cross(poly[0], poly[1], q) != 0) return false;
+    return on_segment(poly[0], poly[1], q);
+  }
+
+  const Points& p0 = poly[0];
+  long long o1 = cross(poly[1] - p0, q - p0);
+  if (o1 == 0) return on_segment(p0, poly[1], q);
+
+  long long o2 = cross(poly.back() - p0, q - p0);
+  if (o2 == 0) return on_segment(p0, poly.back(), q);
+
+  if (o1 < 0 || o2 > 0) return false;
+  int l = 1, r = n - 1;
+
+  while (r - l > 1) {
+    int mid = (l + r) >> 1;
+    if (cross(poly[mid] - p0, q - p0) >= 0) l = mid;
+    else r = mid;
+  }
+
+  return cross(poly[l + 1] - poly[l], q - poly[l]) >= 0;
+}
+
+static vector<Points> input(int m) {
+  vector<Points> poly(m);
+  for (int i = 0; i < m; i++) {
+    long long x, y;
+    cin >> x >> y;
+    poly[i] = {x, y};
+  }
+
+  return poly;
+}
+
+static vector<Points> scale_poly(const vector<Points>& poly, long long k) {
+  vector<Points> r;
+  r.reserve(poly.size());
+  for (auto& p : poly) r.push_back({p.x * k, p.y * k});
+  return r;
+}
+
+static vector<Points> negate_poly(const vector<Points>& poly) {
+  vector<Points> r;
+  r.reserve(poly.size());
+  for (auto& p : poly) r.push_back({-p.x, -p.y});
+  return r;
+}
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  int M1;
+  if (!(cin >> M1)) return 0;
+  vector<Points> A = input(M1);
+
+  int M2;
+  cin >> M2;
+  vector<Points> B = input(M2);
+
+  int N;
+  cin >> N;
+  vector<Points> pts(N);
+  for (int i = 0; i < N; ++i) {
+    long long x, y;
+    cin >> x >> y;
+    pts[i] = {x, y};
+  }
+
+  vector<Points> Ssum = minkowski_sum(A, B);
+  vector<Points> S1 = minkowski_sum(scale_poly(A, 2), negate_poly(B));
+  vector<Points> S2 = minkowski_sum(scale_poly(B, 2), negate_poly(A));
+
+  string out;
+  out.resize(N);
+  for (int i = 0; i < N; i++) {
+    Points p = pts[i];
+    Points two = {p.x * 2, p.y * 2};
+    bool ok = in_convex(Ssum, two) || in_convex(S1, p) || in_convex(S2, p);
+    out[i] = ok ? 'Y' : 'N';
+  }
+
+  cout << out << "\n";
+
+  return 0;
+}
