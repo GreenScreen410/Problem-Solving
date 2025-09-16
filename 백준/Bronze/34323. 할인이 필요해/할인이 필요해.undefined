@@ -1,0 +1,11 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  long long N, M, S;
+  cin >> N >> M >> S;
+
+  cout << min(((M + 1) * S * (100 - N)) / 100, M * S) << "\n";
+  
+  return 0;
+}
