@@ -1,0 +1,207 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+const double EPS = 1e-9;
+
+struct Point3D {
+  double x{}, y{}, z{};
+  Point3D() = default;
+  Point3D(double _x, double _y, double _z) : x(_x), y(_y), z(_z) {}
+  Point3D operator+(const Point3D& o) const { return {x + o.x, y + o.y, z + o.z}; }
+  Point3D operator-(const Point3D& o) const { return {x - o.x, y - o.y, z - o.z}; }
+  Point3D operator*(double k) const { return {x * k, y * k, z * k}; }
+  double dot(const Point3D& o) const { return x * o.x + y * o.y + z * o.z; }
+  Point3D cross(const Point3D& o) const { return {y * o.z - z * o.y, z * o.x - x * o.z, x * o.y - y * o.x}; }
+  double norm_sq() const { return dot(*this); }
+  double norm() const { return sqrt(norm_sq()); }
+};
+
+struct Face {
+  int a, b, c;
+  Point3D n;
+  double d;
+};
+
+static Point3D normal_raw(const Point3D& a, const Point3D& b, const Point3D& c) {
+  return (b - a).cross(c - a);
+}
+
+static void normalize(Point3D& v) {
+  double m = v.norm();
+  if (m > 0) {
+    v.x /= m;
+    v.y /= m;
+    v.z /= m;
+  }
+}
+
+vector<Face> convex_hull_3D(vector<Point3D> points) {
+  int n = (int)points.size();
+  if (n < 4) return {};
+
+  swap(points[1], *find_if(points.begin() + 1, points.end(), [&](const Point3D& p) { return (p - points[0]).norm_sq() > EPS; }));
+  swap(points[2], *find_if(points.begin() + 2, points.end(), [&](const Point3D& p) { return normal_raw(points[0], points[1], p).norm_sq() > EPS; }));
+  swap(points[3], *find_if(points.begin() + 3, points.end(), [&](const Point3D& p) { return fabs(normal_raw(points[0], points[1], points[2]).dot(p - points[0])) > EPS; }));
+
+  Point3D inner = (points[0] + points[1] + points[2] + points[3]) * 0.25;
+
+  struct TempFace {
+    int a, b, c;
+    bool alive;
+  };
+  vector<TempFace> faces;
+  auto add_face_idx = [&](int a, int b, int c) {
+    faces.push_back({a, b, c, true});
+  };
+  add_face_idx(0, 1, 2);
+  add_face_idx(0, 2, 3);
+  add_face_idx(0, 3, 1);
+  add_face_idx(1, 3, 2);
+
+  auto face_normal_outward = [&](TempFace& f) {
+    Point3D nr = normal_raw(points[f.a], points[f.b], points[f.c]);
+    if (nr.dot(points[f.a] - inner) < 0) swap(f.b, f.c);
+  };
+  for (auto& f : faces) face_normal_outward(f);
+
+  for (int i = 4; i < n; i++) {
+    vector<int> visible;
+    for (int fi = 0; fi < (int)faces.size(); ++fi) {
+      if (!faces[fi].alive) continue;
+      auto& f = faces[fi];
+      Point3D nr = normal_raw(points[f.a], points[f.b], points[f.c]);
+      if (nr.dot(points[i] - points[f.a]) > EPS) visible.push_back(fi);
+    }
+    if (visible.empty()) continue;
+
+    struct Edge {
+      int u, v;
+    };
+    vector<Edge> edges;
+    unordered_map<long long, int> cnt;
+    auto key = [&](int u, int v) { return ((long long)u << 32) ^ (unsigned int)v; };
+
+    for (int fi : visible) {
+      auto& f = faces[fi];
+      int vs[3] = {f.a, f.b, f.c};
+      for (int e = 0; e < 3; e++) {
+        int u = vs[e], v = vs[(e + 1) % 3];
+        if (!cnt.count(key(v, u))) cnt[key(u, v)]++;
+        else cnt[key(v, u)]--;
+      }
+    }
+    for (auto& kv : cnt) {
+      if (kv.second == 1) {
+        int u = (int)(kv.first >> 32);
+        int v = (int)(kv.first & 0xffffffffu);
+        edges.push_back({u, v});
+      }
+    }
+    for (int fi : visible) faces[fi].alive = false;
+
+    for (auto& e : edges) {
+      TempFace nf{e.u, e.v, i, true};
+      face_normal_outward(nf);
+      faces.push_back(nf);
+    }
+  }
+
+  vector<Face> out;
+  out.reserve(faces.size());
+  for (auto& f : faces) {
+    if (!f.alive) continue;
+    Point3D nr = normal_raw(points[f.a], points[f.b], points[f.c]);
+    double len = nr.norm();
+    if (len < EPS) continue;
+    Point3D nunit = nr;
+    nunit.x /= len;
+    nunit.y /= len;
+    nunit.z /= len;
+    double d = -nunit.dot(points[f.a]);
+    out.push_back({f.a, f.b, f.c, nunit, d});
+  }
+
+  return out;
+}
+
+double dist2_point_triangle(const Point3D& p, const Point3D& a, const Point3D& b, const Point3D& c) {
+  Point3D ab = b - a;
+  Point3D ac = c - a;
+  Point3D ap = p - a;
+  double d1 = ab.dot(ap);
+  double d2 = ac.dot(ap);
+  if (d1 <= 0.0 && d2 <= 0.0) return (p - a).norm_sq();
+  Point3D bp = p - b;
+  double d3 = ab.dot(bp);
+  double d4 = ac.dot(bp);
+  if (d3 >= 0.0 && d4 <= d3) return (p - b).norm_sq();
+
+  double vc = d1 * d4 - d3 * d2;
+  if (vc <= 0.0 && d1 >= 0.0 && d3 <= 0.0) {
+    double v = d1 / (d1 - d3);
+    Point3D proj = a + ab * v;
+    return (p - proj).norm_sq();
+  }
+
+  Point3D cp = p - c;
+  double d5 = ab.dot(cp);
+  double d6 = ac.dot(cp);
+  if (d6 >= 0.0 && d5 <= d6) return (p - c).norm_sq();
+
+  double vb = d5 * d2 - d1 * d6;
+  if (vb <= 0.0 && d2 >= 0.0 && d6 <= 0.0) {
+    double w = d2 / (d2 - d6);
+    Point3D proj = a + ac * w;
+    return (p - proj).norm_sq();
+  }
+
+  double va = d3 * d6 - d5 * d4;
+  if (va <= 0.0 && (d4 - d3) >= 0.0 && (d5 - d6) >= 0.0) {
+    double w = (d4 - d3) / ((d4 - d3) + (d5 - d6));
+    Point3D proj = b + (c - b) * w;
+    return (p - proj).norm_sq();
+  }
+
+  Point3D n = ab.cross(ac);
+  double dist = fabs(n.dot(ap)) / n.norm();
+  return dist * dist;
+}
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  int n;
+  while (cin >> n && n) {
+    vector<Point3D> points(n);
+    for (auto& p : points) cin >> p.x >> p.y >> p.z;
+
+    vector<Face> hull = convex_hull_3D(points);
+
+    int q;
+    cin >> q;
+
+    while (q--) {
+      Point3D p;
+      cin >> p.x >> p.y >> p.z;
+
+      double best2 = numeric_limits<double>::infinity();
+      for (const auto& f : hull) {
+        double planeDist = -(f.n.dot(p) + f.d);
+        if (planeDist < 0) planeDist = 0;
+        double planeDist2 = planeDist * planeDist;
+        if (planeDist2 >= best2) continue;
+
+        const Point3D& A = points[f.a];
+        const Point3D& B = points[f.b];
+        const Point3D& C = points[f.c];
+        double d2 = dist2_point_triangle(p, A, B, C);
+        if (d2 < best2) best2 = d2;
+      }
+
+      cout << fixed << setprecision(4) << sqrt(best2) + 1e-12 << "\n";
+    }
+  }
+
+  return 0;
+}
