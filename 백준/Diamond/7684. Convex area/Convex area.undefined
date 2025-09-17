@@ -1,0 +1,88 @@
+#include <iostream>
+#include <vector>
+#include <cmath>
+#include <algorithm>
+#include <set>
+using namespace std;
+
+struct Point3D {
+  double x, y, z;
+  bool operator<(const Point3D& p) const {
+    return x < p.x || (x == p.x && (y < p.y || (y == p.y && z < p.z)));
+  }
+};
+
+struct Face {
+  int a, b, c;
+  bool operator<(const Face& f) const {
+    return a < f.a || (a == f.a && (b < f.b || (b == f.b && c < f.c)));
+  }
+};
+
+double dot(const Point3D& a, const Point3D& b) {
+  return a.x * b.x + a.y * b.y + a.z * b.z;
+}
+
+Point3D cross(const Point3D& a, const Point3D& b) {
+  return Point3D(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x);
+}
+
+Point3D normal(const Point3D& a, const Point3D& b, const Point3D& c) {
+    return cross(Point3D(b.x- a.x, b.y - a.y, b.z - a.z), Point3D(c.x - a.x, c.y - a.y, c.z - a.z));
+}
+
+double area(const Point3D& a, const Point3D& b, const Point3D& c) {
+    Point3D n = normal(a, b, c);
+    return sqrt(n.x * n.x + n.y * n.y + n.z * n.z) / 2.0;
+}
+
+vector<Face> convex_hull_3D(const vector<Point3D>& points) {
+  vector<Face> hull;
+  set<Face> faces;
+  
+  if (points.size() < 4) return hull;
+  
+  for (int i = 0; i < points.size(); i++) {
+    for (int j = i + 1; j < points.size(); j++) {
+      for (int k = j + 1; k < points.size(); k++) {
+        Point3D n = normal(points[i], points[j], points[k]);
+        bool positive = false, negative = false;
+        
+        for (const auto& p : points) {
+          double value = dot(n, Point3D(p.x - points[i].x, p.y - points[i].y, p.z - points[i].z));
+          if (value > 1e-9) positive = true;
+          if (value < -1e-9) negative = true;
+        }
+        
+        if (!(positive && negative)) {
+          Face f(i, j, k);
+          Face f_reverse(k, j, i);
+          if (!faces.count(f) && !faces.count(f_reverse)) {
+            faces.insert(f);
+            hull.push_back(f);
+          }
+        }
+      }
+    }
+  }
+  
+  return hull;
+}
+
+int main() {
+  int n;
+  while (cin >> n && n != 0) {
+    vector<Point3D> points(n);
+    for (int i = 0; i < n; i++) {
+      cin >> points[i].x >> points[i].y >> points[i].z;
+    }
+
+    vector<Face> hull = convex_hull_3D(points);
+    double total = 0;
+    for (const Face& f : hull) {
+      total += area(points[f.a], points[f.b], points[f.c]);
+    }
+
+    cout << (int)(total + 0.5) << "\n";
+  }
+}
