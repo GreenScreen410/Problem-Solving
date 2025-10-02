@@ -1,0 +1,21 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  int n;
+  cin >> n;
+  
+  vector<long long> result;
+  while (n--) {
+    string x;
+    cin >> x;
+    
+    reverse(x.begin(), x.end());
+    result.push_back(stoll(x));
+  }
+  sort(result.begin(), result.end());
+  
+  for (auto& i : result) cout << i << "\n";
+  
+  return 0;
+}
