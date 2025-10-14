@@ -1,0 +1,26 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  int N;
+  cin >> N;
+
+  vector<pair<int, string>> v;
+  unordered_map<string, int> difficulty;
+  while (N--) {
+    string S;
+    int I, D;
+    cin >> S >> I >> D;
+
+    v.push_back({I, S});
+    difficulty[S] = D;
+  }
+  sort(v.begin(), v.end());
+  
+  for (auto [I, S] : v) {
+    cout << (char)toupper(S[difficulty[S] - 1]);
+  }
+  cout << "\n";
+
+  return 0;
+}
