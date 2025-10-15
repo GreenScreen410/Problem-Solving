@@ -1,0 +1,28 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  int scenario = 1;
+
+  while (true) {
+    int n;
+    cin >> n;
+
+    if (n == 0) break;
+
+    cin.ignore();
+
+    vector<string> names;
+    while (n--) {
+      string name;
+      getline(cin, name);
+      names.push_back(name);
+    }
+    ranges::sort(names);
+
+    cout << scenario++ << "\n";
+    for (auto& i : names) cout << i << "\n";
+  }
+
+  return 0;
+}
