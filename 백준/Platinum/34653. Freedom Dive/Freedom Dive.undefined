@@ -1,0 +1,50 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+template <typename T>
+struct Point {
+  T x, y;
+  auto operator<=>(const Point<T>&) const = default;
+  Point operator-(const Point& other) const { return {x - other.x, y - other.y}; }
+  T cross(const Point& other) const { return x * other.y - y * other.x; }
+  T ccw(const Point<T>& b, const Point<T>& c) const { return (b - *this).cross(c - *this); }
+};
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+  
+  int N;
+  cin >> N;
+  
+  vector<Point<long long>> L(N);
+  for (auto& [x, y] : L) cin >> x >> y;
+  
+  vector<Point<long long>> hull;
+  for (const auto& p : L) {
+    while (hull.size() >= 2 && hull[hull.size() - 2].ccw(hull.back(), p) <= 0) hull.pop_back();
+    hull.push_back(p);
+  }
+  
+  int Q;
+  cin >> Q;
+  
+  while (Q--) {
+    long long d;
+    cin >> d;
+    
+    auto it = upper_bound(hull.begin(), hull.end(), d, [](long long x, const Point<long long>& p) {
+      return x < p.x;
+    });
+    
+    Point<long long> r = *it;
+    Point<long long> l = *(it - 1);
+    
+    long long s = l.y * (r.x - d) + r.y * (d - l.x);
+    long long t = r.x - l.x;
+    
+    cout << (s / gcd(s, t)) << " " << (t / gcd(s, t)) << "\n";
+  }
+  
+  return 0;
+}
