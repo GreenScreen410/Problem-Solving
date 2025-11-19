@@ -1,0 +1,44 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Line {
+  long double a, b, c;
+};
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  int n, t;
+  cin >> n >> t;
+
+  vector<Line> lines(n);
+  for (auto& l : lines) cin >> l.a >> l.b >> l.c;
+
+  while (t--) {
+    long double u, v, w;
+    cin >> u >> v >> w;
+
+    vector<pair<long double, int>> points(n);
+    for (int i = 0; i < n; i++) {
+      auto [a, b, c] = lines[i];
+      long double det = a * v - u * b;
+      long double x = (b * w - v * c) / det;
+      long double y = (c * u - w * a) / det;
+      points[i] = {x * (-v) + y * u, i};
+    }
+    sort(points.begin(), points.end());
+
+    long double result = 1e18;
+    for (int i = 0; i < n - 1; i++) {
+      auto [a1, b1, c1] = lines[points[i].second];
+      auto [a2, b2, c2] = lines[points[i + 1].second];
+      long double det = a1 * b2 - a2 * b1;
+      long double ix = (b1 * c2 - b2 * c1) / det;
+      long double iy = (c1 * a2 - c2 * a1) / det;
+      result = min(result, abs(u * ix + v * iy + w) / hypot(u, v));
+    }
+
+    cout << fixed << setprecision(9) << result << "\n";
+  }
+}
