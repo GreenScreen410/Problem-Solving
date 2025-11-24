@@ -1,0 +1,24 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  long double x1, y1, x2, y2, x3, y3;
+  cin >> x1 >> y1 >> x2 >> y2 >> x3 >> y3;
+  
+  long double r1 = hypot(x1 - x3, y1 - y3);
+  long double r2 = hypot(x2 - x3, y2 - y3);
+  long double theta = abs(atan2(y1 - y3, x1 - x3) - atan2(y2 - y3, x2 - x3));
+  if (theta > acos(-1.0L)) theta = 2 * acos(-1.0L) - theta;
+  
+  cout << fixed << setprecision(8);
+  
+  if (abs(r1 - r2) < 1e-9) {
+    cout << r1 * theta;
+  } else {
+    long double dr = abs(r1 - r2);
+    long double dl = abs(log(r1 / r2));
+    cout << dr * hypot(dl, theta) / dl;
+  }
+  
+  return 0;
+}
