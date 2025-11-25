@@ -4,15 +4,15 @@
 
 ### 성능 요약
 
-메모리: 5216 KB, 시간: 88 ms
+메모리: 5216 KB, 시간: 80 ms
 
 ### 분류
 
-볼록 껍질, 기하학
+기하학, 볼록 껍질, 각도 정렬
 
 ### 제출 일자
 
-2025년 2월 8일 16:20:57
+2025년 7월 22일 11:10:31
 
 ### 문제 설명
 
@@ -24,7 +24,7 @@
 
 <p>2차원 평면에 N개의 점이 주어졌을 때, 이들 중 몇 개의 점을 골라 볼록 다각형을 만드는데, 나머지 모든 점을 내부에 포함하도록 할 수 있다. 이를 볼록 껍질 (CONVEX HULL) 이라 한다. 아래 그림은 N=10인 경우의 한 예이다.</p>
 
-<p style="text-align: center;"><img alt="" src="https://www.acmicpc.net/JudgeOnline/upload/201005/convv.PNG" style="height:95px; width:121px"></p>
+<p style="text-align: center;"><img alt="" src="" style="height:95px; width:121px"></p>
 
 <p>점의 집합이 주어졌을 때, 볼록 껍질을 이루는 점의 개수를 구하는 프로그램을 작성하시오.</p>
 

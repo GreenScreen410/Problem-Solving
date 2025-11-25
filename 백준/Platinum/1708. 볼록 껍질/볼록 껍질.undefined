@@ -1,45 +1,62 @@
-#include <algorithm>
-#include <iostream>
-#include <vector>
+#include <bits/stdc++.h>
 using namespace std;
 
+template <typename T>
 struct Point {
-  long long x, y;
+  T x, y;
+  auto operator<=>(const Point<T>&) const = default;
+
+  T ccw(const Point<T>& b, const Point<T>& c) const {
+    return (b.x - x) * (c.y - y) - (b.y - y) * (c.x - x);
+  }
+
+  T dist2(const Point<T>& other) const {
+    return (x - other.x) * (x - other.x) + (y - other.y) * (y - other.y);
+  }
+
+  long double dist(const Point<T>& other) const {
+    return sqrt(dist2(other));
+  }
 };
 
-long long ccw(Point a, Point b, Point c) {
-  return (a.x * b.y + b.x * c.y + c.x * a.y) - (b.x * a.y + c.x * b.y + a.x * c.y);
-}
+template <typename T>
+vector<Point<T>> convex_hull(vector<Point<T>> points) {
+  if (points.size() <= 2) return points;
 
-vector<Point> convex_hull(vector<Point> points) {
-  sort(points.begin(), points.end(), [](Point a, Point b) {
-    return make_pair(a.y, a.x) < make_pair(b.y, b.x);
+  sort(points.begin(), points.end());
+  sort(points.begin() + 1, points.end(), [p = points.front()](auto& a, auto& b) {
+    T value = p.ccw(a, b);
+
+    if constexpr (is_floating_point_v<T>) {
+      if (abs(value) > 1e-9) return value > 0;
+    } else {
+      if (value != 0) return value > 0;
+    }
+    return p.dist2(a) < p.dist2(b);
   });
-  sort(points.begin() + 1, points.end(), [p = points.front()](Point a, Point b) {
-    return ccw(p, a, b) == 0 ? make_pair(a.y, a.x) < make_pair(b.y, b.x) : ccw(p, a, b) > 0;
-  });
-  
-  vector<Point> hull;
+
+  vector<Point<T>> hull;
   for (auto p : points) {
-    while (hull.size() >= 2 && ccw(hull[hull.size() - 2], hull.back(), p) <= 0) {
-      hull.pop_back();
+    if constexpr (is_floating_point_v<T>) {
+      while (hull.size() >= 2 && end(hull)[-2].ccw(hull.back(), p) <= 1e-9) hull.pop_back();
+    } else {
+      while (hull.size() >= 2 && end(hull)[-2].ccw(hull.back(), p) <= 0) hull.pop_back();
     }
     hull.push_back(p);
   }
-  
+
   return hull;
 }
 
 int main() {
   int N;
   cin >> N;
-  
-  vector<Point> points(N);
-  for (auto &p : points) {
-    cin >> p.x >> p.y;
-  }
-  
-  cout << convex_hull(points).size();
-  
+
+  vector<Point<long long>> points(N);
+  for (auto& p : points) cin >> p.x >> p.y;
+
+  auto hull = convex_hull(points);
+  cout << hull.size() << "\n";
+
   return 0;
 }
