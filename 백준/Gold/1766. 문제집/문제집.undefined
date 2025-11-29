@@ -1,0 +1,51 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+template <typename T = queue<int>>
+auto topological_sort(const auto& adj) {
+  int n = adj.size();
+  vector<int> in(n), order;
+
+  for (int x : adj | views::join) in[x]++;
+
+  T q;
+  for (int i : views::iota(0, n)) {
+    if (!in[i]) q.push(i);
+  }
+
+  while (!q.empty()) {
+    int curr;
+    if constexpr (requires { q.front(); }) curr = q.front();
+    else curr = q.top();
+
+    q.pop();
+    order.push_back(curr);
+    for (auto next : adj[curr]) {
+      if (!--in[next]) q.push(next);
+    }
+  }
+
+  return order.size() == n ? order : decltype(order){};
+}
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  int N, M;
+  cin >> N >> M;
+
+  vector<vector<int>> adj(N);
+  for (int i = 0; i < M; i++) {
+    int A, B;
+    cin >> A >> B;
+    adj[A - 1].push_back(B - 1);
+  }
+
+  auto order = topological_sort<priority_queue<int, vector<int>, greater<>>>(adj);
+
+  for (int i : order) cout << i + 1 << " ";
+  cout << "\n";
+
+  return 0;
+}
