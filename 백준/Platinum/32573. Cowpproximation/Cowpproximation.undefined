@@ -1,0 +1,44 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+double distance(double x, double y) {
+  return sqrt(pow(x, 2) + pow(y, 2));
+}
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+  
+  int N;
+  cin >> N;
+  
+  double a[1005], b[1005], r[1005];
+  for (int i = 0; i < N; i++) cin >> a[i] >> b[i] >> r[i];
+  
+  double x = accumulate(a, a + N, 0.0) / N;
+  double y = accumulate(b, b + N, 0.0) / N;
+  double ratio = 0.1, max_time, current_time;
+  
+  for (int i = 0; i < 30000; i++) {
+    int max_time_index = 0;
+    max_time = distance(x - a[0], y - b[0]) - r[0];
+    
+    for (int j = 1; j < N; j++) {
+      current_time = distance(x - a[j], y - b[j]) - r[j];
+      if (max_time < current_time) {
+        max_time = current_time;
+        max_time_index = j;
+      }
+    }
+    
+    x += (a[max_time_index] - x) * ratio;
+    y += (b[max_time_index] - y) * ratio;
+    ratio *= 0.999;
+  } 
+  
+  if (max_time < 0) max_time = 0;
+  cout << fixed << setprecision(5);
+  cout << max_time;
+  
+  return 0;
+}
