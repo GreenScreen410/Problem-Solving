@@ -1,13 +1,12 @@
-#include <climits>
-#include <iostream>
-#include <vector>
+#include <bits/stdc++.h>
 using namespace std;
 
-auto floyd_warshall(auto& graph) {
-  for (int k = 0; k < graph.size(); k++) {
-    for (int i = 0; i < graph.size(); i++) {
-      for (int j = 0; j < graph.size(); j++) {
-        graph[i][j] = min(graph[i][j], graph[i][k] + graph[k][j]);
+void floyd_warshall(auto& dist) {
+  auto range = views::iota(0, (int)dist.size());
+  for (int k : range) {
+    for (int i : range) {
+      for (int j : range) {
+        dist[i][j] = min(dist[i][j], add_sat(dist[i][k], dist[k][j]));
       }
     }
   }
@@ -16,10 +15,11 @@ auto floyd_warshall(auto& graph) {
 int main() {
   ios_base::sync_with_stdio(false);
   cin.tie(nullptr);
+  
   int n;
   cin >> n;
   
-  vector<vector<long long>> graph(26, vector<long long>(26, INT_MAX));
+  vector<vector<long long>> graph(26, vector<long long>(26, LLONG_MAX));
   for (int i = 0; i < 26; i++) {
     graph[i][i] = 0;
   }
@@ -40,7 +40,7 @@ int main() {
     char a, b;
     string is;
     cin >> a >> is >> b;
-    cout << (graph[a - 'a'][b - 'a'] == INT_MAX ? "F" : "T") << "\n";
+    cout << (graph[a - 'a'][b - 'a'] == LLONG_MAX ? "F" : "T") << "\n";
   }
   
   return 0;
