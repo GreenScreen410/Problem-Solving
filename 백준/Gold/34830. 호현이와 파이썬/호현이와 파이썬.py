@@ -1,10 +1,10 @@
 import math
 
-n = int(input())
+N = int(input())
 
-base = math.comb(n, 2)
-if n % 2 == 0:
-    panalty = (n - 2) // 2
+base = math.comb(N, 2)
+if N % 2 == 0:
+    panalty = (N - 2) // 2
     print(base + panalty)
 else:
     print(base)
