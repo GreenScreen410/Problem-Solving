@@ -1,0 +1,46 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Course {
+  int id, A, B, limit;
+};
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  int N, M, S;
+  cin >> N >> M >> S;
+
+  vector<int> A(N);
+  for (auto& i : A) cin >> i;
+
+  vector<int> B(N);
+  for (auto& i : B) cin >> i;
+
+  vector<Course> courses(N);
+  for (int i = 0; i < N; i++) {
+    courses[i].id = i;
+    courses[i].A = A[i];
+    courses[i].B = B[i];
+    courses[i].limit = min(A[i], M);
+  }
+
+  sort(courses.begin(), courses.end(), [](auto& a, auto& b) {
+    return a.B * b.A > b.B * a.A;
+  });
+
+  vector<int> bets(N);
+  for (int i = 0; i < N; i++) {
+    if (S <= 0) break;
+    int amount = min(courses[i].limit, S);
+    bets[courses[i].id] = amount;
+    S -= amount;
+  }
+
+  for (auto& i : bets) {
+    cout << i << " ";
+  }
+
+  return 0;
+}
