@@ -1,0 +1,37 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+template <typename T>
+struct Point {
+  T x, y;
+  Point operator+(const Point& other) const { return {x + other.x, y + other.y}; }
+  T manhattan(const Point& other) const { return abs(x - other.x) + abs(y - other.y); }
+};
+
+int main() {
+  Point<int> a, b;
+  cin >> a.x >> a.y >> b.x >> b.y;
+
+  if ((abs(a.x + a.y) % 2) != (abs(b.x + b.y) % 2)) {
+    cout << "-1\n";
+    return 0;
+  }
+
+  Point<int> sum = a + b;
+  int x_list[] = {sum.x / 2, sum.x / 2 + 1, sum.x / 2 - 1};
+  int y_list[] = {sum.y / 2, sum.y / 2 + 1, sum.y / 2 - 1};
+
+  for (int x : x_list) {
+    for (int y : y_list) {
+      Point<int> p = {x, y};
+      if (p.manhattan(a) == p.manhattan(b)) {
+        cout << p.x << " " << p.y << "\n";
+        return 0;
+      }
+    }
+  }
+
+  cout << -1 << "\n";
+
+  return 0;
+}
