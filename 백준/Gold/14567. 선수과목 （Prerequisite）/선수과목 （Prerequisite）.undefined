@@ -1,0 +1,31 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(NULL);
+
+  int N, M;
+  cin >> N >> M;
+
+  vector<vector<int>> adj(N + 1);
+  while (M--) {
+    int A, B;
+    cin >> A >> B;
+    adj[A].push_back(B);
+  }
+
+  vector<int> dp(N + 1, 1);
+  for (int i = 1; i <= N; i++) {
+    for (int next : adj[i]) {
+      dp[next] = max(dp[next], dp[i] + 1);
+    }
+  }
+
+  for (int i = 1; i <= N; i++) {
+    cout << dp[i] << " ";
+  }
+  cout << "\n";
+
+  return 0;
+}
