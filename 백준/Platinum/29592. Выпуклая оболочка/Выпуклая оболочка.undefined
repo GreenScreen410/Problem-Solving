@@ -1,0 +1,58 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+template <typename T>
+struct Point {
+  T x, y;
+  auto operator<=>(const Point<T>&) const = default;
+  Point operator-(const Point& other) const { return {x - other.x, y - other.y}; }
+  T cross(const Point& other) const { return x * other.y - y * other.x; }
+  T ccw(const Point<T>& b, const Point<T>& c) const { return (b - *this).cross(c - *this); }
+};
+
+template <typename T>
+vector<Point<T>> convex_hull(vector<Point<T>> points) {
+  ranges::sort(points);
+
+  vector<Point<T>> lower, upper;
+  for (const auto& p : points) {
+    while (lower.size() >= 2 && end(lower)[-2].ccw(lower.back(), p) <= 0) lower.pop_back();
+    lower.push_back(p);
+  }
+  for (const auto& p : views::reverse(points)) {
+    while (upper.size() >= 2 && end(upper)[-2].ccw(upper.back(), p) <= 0) upper.pop_back();
+    upper.push_back(p);
+  }
+
+  lower.pop_back();
+  lower.insert(lower.end(), upper.begin(), upper.end() - 1);
+
+  return lower;
+}
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  int n;
+  cin >> n;
+
+  vector<Point<long long>> points(n);
+  for (int i = 0; i < n; ++i) {
+    cin >> points[i].x >> points[i].y;
+  }
+
+  auto hull = convex_hull(points);
+
+  long long area = 0, boundary = 0;
+  for (int i = 0; i < hull.size(); i++) {
+    const auto& cur = hull[i];
+    const auto& next = hull[(i + 1) % hull.size()];
+    area += cur.cross(next);
+    boundary += gcd(abs(cur.x - next.x), abs(cur.y - next.y));
+  }
+
+  cout << (abs(area) - boundary + 2) / 2 << "\n";
+
+  return 0;
+}
