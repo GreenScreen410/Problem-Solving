@@ -1,0 +1,81 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+template <typename T>
+struct Point {
+  T x, y;
+  auto operator<=>(const Point<T>&) const = default;
+  Point operator-(const Point& other) const { return {x - other.x, y - other.y}; }
+  T cross(const Point& other) const { return x * other.y - y * other.x; }
+  T ccw(const Point<T>& b, const Point<T>& c) const { return (b - *this).cross(c - *this); }
+};
+
+template <typename T>
+vector<Point<T>> convex_hull(vector<Point<T>> points) {
+  ranges::sort(points);
+
+  vector<Point<T>> lower, upper;
+  for (const auto& p : points) {
+    while (lower.size() >= 2 && end(lower)[-2].ccw(lower.back(), p) <= 1e-9) lower.pop_back();
+    lower.push_back(p);
+  }
+  for (const auto& p : views::reverse(points)) {
+    while (upper.size() >= 2 && end(upper)[-2].ccw(upper.back(), p) <= 1e-9) upper.pop_back();
+    upper.push_back(p);
+  }
+
+  lower.pop_back();
+  lower.insert(lower.end(), upper.begin(), upper.end() - 1);
+
+  return lower;
+}
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  int t;
+  cin >> t;
+
+  while (t--) {
+    int n;
+    cin >> n;
+
+    vector<Point<long double>> points(n);
+    for (int i = 0; i < n; i++) {
+      cin >> points[i].x >> points[i].y;
+    }
+
+    Point<long double> s1 = points[0];
+    Point<long double> t1 = points[1];
+    Point<long double> s2 = points[2];
+    Point<long double> t2 = points[3];
+
+    auto hull = convex_hull(points);
+
+    auto is_on_hull = [&](const Point<long double>& p) {
+      for (const auto& i : hull) {
+        if (i == p) return true;
+      }
+      return false;
+    };
+
+    if (!is_on_hull(s1) || !is_on_hull(t1) || !is_on_hull(s2) || !is_on_hull(t2)) {
+      cout << "POSSIBLE\n";
+    } else {
+      vector<int> sequence;
+      for (const auto& p : hull) {
+        if (p == s1 || p == t1) sequence.push_back(0);
+        else if (p == s2 || p == t2) sequence.push_back(1);
+      }
+
+      if (sequence.size() == 4 && sequence[0] == sequence[2]) {
+        cout << "IMPOSSIBLE\n";
+      } else {
+        cout << "POSSIBLE\n";
+      }
+    }
+  }
+
+  return 0;
+}
