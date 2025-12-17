@@ -1,0 +1,48 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+template <typename T>
+struct Point {
+  T x, y;
+  auto operator<=>(const Point<T>&) const = default;
+  Point operator-(const Point& other) const { return {x - other.x, y - other.y}; }
+  T cross(const Point& other) const { return x * other.y - y * other.x; }
+  T ccw(const Point<T>& b, const Point<T>& c) const { return (b - *this).cross(c - *this); }
+};
+
+struct Pub {
+  Point<long long> p;
+  int id;
+};
+
+int main() {
+  int n;
+  cin >> n;
+
+  vector<Pub> pubs(n);
+  for (int i = 0; i < n; i++) {
+    cin >> pubs[i].p.x >> pubs[i].p.y;
+    pubs[i].id = i + 1;
+  }
+
+  auto start_it = min_element(pubs.begin(), pubs.end(), [](const Pub& a, const Pub& b) {
+    return a.p < b.p;
+  });
+  iter_swap(pubs.begin(), start_it);
+
+  for (int i = 1; i < n; i++) {
+    int best = i;
+    for (int j = i + 1; j < n; j++) {
+      if (pubs[i - 1].p.ccw(pubs[best].p, pubs[j].p) < 0) best = j;
+    }
+    swap(pubs[i], pubs[best]);
+  }
+
+  cout << n << "\n";
+  for (int i = 0; i < n; i++) {
+    cout << pubs[i].id << " ";
+  }
+  cout << "\n";
+
+  return 0;
+}
