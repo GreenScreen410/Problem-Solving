@@ -1,0 +1,78 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Point {
+  long long x, y;
+  auto operator<=>(const Point&) const = default;
+};
+
+bool inside(Point p, const vector<Point>& poly) {
+  bool in = false;
+  for (int i = 0, j = poly.size() - 1; i < poly.size(); j = i++) {
+    if ((poly[i].y > p.y) != (poly[j].y > p.y)) {
+      if (p.x < (poly[j].x - poly[i].x) * (double)(p.y - poly[i].y) / (poly[j].y - poly[i].y) + poly[i].x) in = !in;
+    }
+  }
+  return in;
+}
+
+struct Fence {
+  Point u, v;
+  bool used = false;
+};
+
+int main() {
+  int N, C;
+  cin >> N >> C;
+  
+  vector<Fence> fences(N);
+  for (auto& f : fences) cin >> f.u.x >> f.u.y >> f.v.x >> f.v.y;
+  
+  vector<Point> cows(C);
+  for (auto& c : cows) cin >> c.x >> c.y;
+  
+  vector<vector<Point>> polys;
+  for (auto& start_f : fences) {
+    if (start_f.used) continue;
+    
+    start_f.used = true;
+    vector<Point> poly;
+    
+    Point curr = start_f.v;
+    poly.push_back(start_f.u);
+    
+    while (curr != start_f.u) {
+      poly.push_back(curr);
+      
+      for (auto& f : fences) {
+        if (f.used) continue;
+        
+        if (f.u == curr) {
+          f.used = true;
+          curr = f.v;
+          break;
+        } else if (f.v == curr) {
+          f.used = true;
+          curr = f.u;
+          break;
+        }
+      }
+    }
+    polys.push_back(poly);
+  }
+  
+  int result = 0;
+  map<vector<int>, int> counts;
+  
+  for (const auto& cow : cows) {
+    vector<int> v;
+    for (int i = 0; i < polys.size(); i++) {
+      if (inside(cow, polys[i])) v.push_back(i);
+    }
+    result = max(result, ++counts[v]);
+  }
+  
+  cout << result << "\n";
+  
+  return 0;
+}
