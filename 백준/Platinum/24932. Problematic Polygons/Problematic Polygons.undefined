@@ -1,0 +1,85 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+template <typename T>
+struct Point {
+  T x, y;
+  auto operator<=>(const Point<T>&) const = default;
+  Point operator-(const Point& other) const { return {x - other.x, y - other.y}; }
+  int sign(T v) const { return (v > 0) - (v < 0); }
+  T cross(const Point& other) const { return x * other.y - y * other.x; }
+  T ccw(const Point<T>& b, const Point<T>& c) const { return (b - *this).cross(c - *this); }
+};
+
+auto line_intersection(auto a, auto b, auto c, auto d) {
+  int ab = a.sign(a.ccw(b, c)) * a.sign(a.ccw(b, d));
+  int cd = c.sign(c.ccw(d, a)) * c.sign(c.ccw(d, b));
+  if (ab == 0 && cd == 0) return min(a, b) <= max(c, d) && min(c, d) <= max(a, b);
+  return ab <= 0 && cd <= 0;
+}
+
+bool is_inside(const auto& poly, auto p) {
+  int crossings = 0;
+  for (int i = 0; i < poly.size(); i++) {
+    auto a = poly[i];
+    auto b = poly[(i + 1) % poly.size()];
+    if (a.ccw(b, p) == 0 && min(a, b) <= p && p <= max(a, b)) return true;
+    if (a.y > b.y) swap(a, b);
+    if (a.y <= p.y && p.y < b.y && a.ccw(b, p) > 0) crossings++;
+  }
+  return crossings % 2;
+}
+
+vector<Point<double>> rotate_polygon(const auto& poly, int theta) {
+  double rad = theta * M_PI / 180.0;
+  double c = cos(rad), s = sin(rad);
+  vector<Point<double>> rotated;
+  for (auto& p : poly) {
+    rotated.push_back({p.x * c - p.y * s, p.x * s + p.y * c});
+  }
+  return rotated;
+}
+
+bool is_fitting(const auto& object, const auto& container) {
+  int n = object.size();
+  int m = container.size();
+
+  for (int i = 0; i < n; ++i) {
+    for (int j = 0; j < m; ++j) {
+      if (line_intersection(object[i], object[(i + 1) % n], container[j], container[(j + 1) % m])) {
+        return false;
+      }
+    }
+  }
+
+  for (auto& p : object) {
+    if (!is_inside(container, p)) return false;
+  }
+
+  return true;
+}
+
+int main() {
+  int N, M;
+  cin >> N >> M;
+
+  vector<Point<double>> object(N);
+  for (auto& p : object) cin >> p.x >> p.y;
+
+  vector<Point<double>> container(M);
+  for (auto& p : container) cin >> p.x >> p.y;
+
+  bool found = false;
+  for (int theta = 0; theta < 360; theta++) {
+    vector<Point<double>> rotated = rotate_polygon(object, theta);
+    if (is_fitting(rotated, container)) {
+      cout << theta << "\n";
+      found = true;
+      break;
+    }
+  }
+
+  if (!found) cout << "impossible\n";
+
+  return 0;
+}
