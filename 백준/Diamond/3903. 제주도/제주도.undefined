@@ -1,0 +1,107 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+template <typename T>
+struct Point {
+  T x, y;
+  auto operator<=>(const Point<T>&) const = default;
+  Point operator+(const Point& other) const { return {x + other.x, y + other.y}; }
+  Point operator-(const Point& other) const { return {x - other.x, y - other.y}; }
+  Point operator*(T scalar) const { return {x * scalar, y * scalar}; }
+  T cross(const Point& other) const { return x * other.y - y * other.x; }
+  T ccw(const Point<T>& b, const Point<T>& c) const { return (b - *this).cross(c - *this); }
+  T norm() const { return sqrtl(x * x + y * y); }
+};
+
+template <typename T>
+struct Line {
+  Point<T> p, q;
+  long double angle;
+
+  Line(Point<T> p, Point<T> q) : p(p), q(q) { angle = atan2l(q.y - p.y, q.x - p.x); }
+
+  bool operator<(const Line& other) const { return angle < other.angle; }
+  bool is_outside(const Point<T>& r) const { return p.ccw(q, r) < -1e-9; }
+  Point<T> intersect(const Line& other) const {
+    T det = (q - p).cross(other.q - other.p);
+    T t = (other.p - p).cross(other.q - other.p) / det;
+    return {p.x + (q.x - p.x) * t, p.y + (q.y - p.y) * t};
+  }
+};
+
+template <typename T>
+vector<Point<T>> half_plane_intersection(vector<Line<T>>& lines) {
+  sort(lines.begin(), lines.end());
+
+  deque<Line<T>> dq;
+  for (auto& line : lines) {
+    while (dq.size() >= 2 && line.is_outside(dq.back().intersect(dq[dq.size() - 2]))) {
+      dq.pop_back();
+    }
+    while (dq.size() >= 2 && line.is_outside(dq.front().intersect(dq[1]))) {
+      dq.pop_front();
+    }
+    dq.push_back(line);
+  }
+
+  while (dq.size() >= 3 && dq.front().is_outside(dq.back().intersect(dq[dq.size() - 2]))) {
+    dq.pop_back();
+  }
+  while (dq.size() >= 3 && dq.back().is_outside(dq.front().intersect(dq[1]))) {
+    dq.pop_front();
+  }
+
+  vector<Point<T>> result;
+  if (dq.size() < 3) return result;
+
+  for (size_t i = 0; i < dq.size(); i++) {
+    result.push_back(dq[i].intersect(dq[(i + 1) % dq.size()]));
+  }
+  return result;
+}
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  while (true) {
+    int n;
+    cin >> n;
+    if (n == 0) break;
+
+    vector<Point<long double>> poly(n);
+    for (auto& p : poly) cin >> p.x >> p.y;
+
+    auto check = [&](long double r) -> bool {
+      vector<Line<long double>> lines;
+      lines.reserve(n);
+      for (int i = 0; i < n; i++) {
+        Point<long double> p1 = poly[i];
+        Point<long double> p2 = poly[(i + 1) % n];
+
+        Point<long double> vec = p2 - p1;
+        Point<long double> normal = {-vec.y / vec.norm(), vec.x / vec.norm()};
+
+        Point<long double> shift = normal * r;
+        Point<long double> new_p1 = p1 + shift;
+        Point<long double> new_p2 = p2 + shift;
+
+        lines.emplace_back(new_p1, new_p2);
+      }
+
+      vector<Point<long double>> region = half_plane_intersection(lines);
+      return !region.empty();
+    };
+
+    long double low = 0.0, high = 20000.0;
+    for (int iter = 0; iter < 100; iter++) {
+      long double mid = (low + high) / 2;
+      if (check(mid)) low = mid;
+      else high = mid;
+    }
+
+    cout << fixed << setprecision(5) << low << "\n";
+  }
+
+  return 0;
+}
