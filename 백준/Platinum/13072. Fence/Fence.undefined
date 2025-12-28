@@ -1,0 +1,67 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+template <typename T>
+struct Point {
+  T x, y;
+  auto operator<=>(const Point<T>&) const = default;
+  Point operator-(const Point& other) const { return {x - other.x, y - other.y}; }
+  T cross(const Point& other) const { return x * other.y - y * other.x; }
+  T ccw(const Point<T>& b, const Point<T>& c) const { return (b - *this).cross(c - *this); }
+};
+
+template <typename T>
+vector<Point<T>> convex_hull(vector<Point<T>> points) {
+  if (points.empty()) return {};
+
+  ranges::sort(points);
+  points.erase(unique(points.begin(), points.end()), points.end());
+  if (points.size() <= 1) return points;
+
+  vector<Point<T>> lower, upper;
+  for (const auto& p : points) {
+    while (lower.size() >= 2 && end(lower)[-2].ccw(lower.back(), p) <= 0) lower.pop_back();
+    lower.push_back(p);
+  }
+  for (const auto& p : views::reverse(points)) {
+    while (upper.size() >= 2 && end(upper)[-2].ccw(upper.back(), p) <= 0) upper.pop_back();
+    upper.push_back(p);
+  }
+
+  lower.pop_back();
+  lower.insert(lower.end(), upper.begin(), upper.end() - 1);
+
+  return lower;
+}
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(NULL);
+
+  int n;
+  while (cin >> n && n != 0) {
+    vector<Point<long long>> points(n);
+    for (auto& p : points) cin >> p.x >> p.y;
+
+    vector<Point<long long>> hull = convex_hull(points);
+
+    long long total_a = 0, total_b = 0;
+    for (size_t i = 0; i < hull.size(); i++) {
+      Point<long long> p1 = hull[i];
+      Point<long long> p2 = hull[(i + 1) % hull.size()];
+
+      long long dx = abs(p1.x - p2.x);
+      long long dy = abs(p1.y - p2.y);
+
+      long long diag = min(dx, dy);
+      long long straight = abs(dx - dy);
+
+      total_b += diag;
+      total_a += straight;
+    }
+
+    cout << total_a << " " << total_b << "\n";
+  }
+
+  return 0;
+}
