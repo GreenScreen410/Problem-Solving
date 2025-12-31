@@ -1,0 +1,35 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  int N;
+  cin >> N;
+  
+  if (N < 7) {
+    cout << "NO\n";
+  } else {
+    cout << "YES\n";
+  
+    if (N == 7) {
+      cout << "1 + 4\n2 * 6\n5 * 5\n7 * 12\n84 - 3\n25 * 81\n";
+    } else if (N == 8) {
+      cout << "8 - 3\n4 - 1\n2 * 6\n5 * 5\n7 * 12\n84 - 3\n25 * 81\n";
+    } else {
+      cout << "6 * 7\n42 + 3\n45 * 5\n225 * 9\n";
+      int curr = N;
+      while (curr >= 11) {
+        cout << curr << " - " << curr - 1 << "\n";
+        cout << "1 * 1\n";
+        curr -= 2;
+      }
+      
+      if (curr == 10) { 
+        cout << "10 - 8\n4 - 2\n2 - 2\n1 * 0\n2025 + 0\n";
+      } else { 
+        cout << "8 - 4\n4 - 2\n2 - 1\n2025 * 1\n";
+      }
+    }
+  }
+
+  return 0;
+}
