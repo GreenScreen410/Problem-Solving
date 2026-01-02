@@ -1,0 +1,74 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+template <typename T>
+struct Point {
+  T x, y;
+  auto operator<=>(const Point<T>&) const = default;
+  Point operator-(const Point& other) const { return {x - other.x, y - other.y}; }
+  T cross(const Point& other) const { return x * other.y - y * other.x; }
+  T dot(const Point& other) const { return x * other.x + y * other.y; }
+  T ccw(const Point<T>& b, const Point<T>& c) const { return (b - *this).cross(c - *this); }
+};
+
+template <typename T>
+vector<Point<T>> convex_hull(vector<Point<T>> points) {
+  ranges::sort(points);
+
+  vector<Point<T>> lower, upper;
+  for (const auto& p : points) {
+    while (lower.size() >= 2 && end(lower)[-2].ccw(lower.back(), p) <= 0) lower.pop_back();
+    lower.push_back(p);
+  }
+  for (const auto& p : views::reverse(points)) {
+    while (upper.size() >= 2 && end(upper)[-2].ccw(upper.back(), p) <= 0) upper.pop_back();
+    upper.push_back(p);
+  }
+
+  lower.pop_back();
+  lower.insert(lower.end(), upper.begin(), upper.end() - 1);
+
+  return lower;
+}
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(NULL);
+
+  int n;
+  while (cin >> n && n != 0) {
+    vector<Point<long long>> points(n);
+    for (auto& p : points) cin >> p.x >> p.y;
+
+    vector<Point<long long>> hull = convex_hull(points);
+
+    bool possible = true;
+    int h_size = hull.size();
+    for (int i = 0; i < h_size; i++) {
+      Point<long long> u = hull[i];
+      Point<long long> v = hull[(i + 1) % h_size];
+      Point<long long> h_vec = v - u;
+
+      bool start_covered = false;
+      bool end_covered = false;
+
+      for (int j = 0; j < n; j++) {
+        Point<long long> p_curr = points[j];
+        Point<long long> p_next = points[(j + 1) % n];
+        Point<long long> p_vec = p_next - p_curr;
+
+        if (p_curr == u && (h_vec.cross(p_vec) == 0 && h_vec.dot(p_vec) > 0)) start_covered = true;
+        if (p_next == v && (h_vec.cross(p_vec) == 0 && h_vec.dot(p_vec) > 0)) end_covered = true;
+      }
+
+      if (!start_covered || !end_covered) {
+        possible = false;
+        break;
+      }
+    }
+
+    cout << (possible ? "Yes" : "No") << "\n";
+  }
+
+  return 0;
+}
