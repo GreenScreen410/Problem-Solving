@@ -1,0 +1,66 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+template <typename T>
+struct Point {
+  T x, y;
+  int id;
+  auto operator<=>(const Point<T>&) const = default;
+  Point operator-(const Point& other) const { return {x - other.x, y - other.y, 0}; }
+  T cross(const Point& other) const { return x * other.y - y * other.x; }
+  T ccw(const Point<T>& b, const Point<T>& c) const { return (b - *this).cross(c - *this); }
+};
+
+template <typename T>
+vector<Point<T>> convex_hull(vector<Point<T>> points) {
+  ranges::sort(points);
+
+  vector<Point<T>>
+      lower, upper;
+  for (const auto& p : points) {
+    while (lower.size() >= 2 && end(lower)[-2].ccw(lower.back(), p) <= 0) lower.pop_back();
+    lower.push_back(p);
+  }
+  for (const auto& p : views::reverse(points)) {
+    while (upper.size() >= 2 && end(upper)[-2].ccw(upper.back(), p) <= 0) upper.pop_back();
+    upper.push_back(p);
+  }
+
+  lower.pop_back();
+  lower.insert(lower.end(), upper.begin(), upper.end() - 1);
+
+  return lower;
+}
+
+int main() {
+  int n;
+  cin >> n;
+
+  vector<Point<long long>> points(n);
+  for (int i = 0; i < n; i++) {
+    cin >> points[i].x >> points[i].y;
+    points[i].id = i + 1;
+  }
+
+  vector<Point<long long>> hull = convex_hull(points);
+  if (hull.size() < n) {
+    cout << 1 << "\n";
+
+    set<int> hull_ids;
+    for (const auto& p : hull) {
+      hull_ids.insert(p.id);
+    }
+
+    for (const auto& p : points) {
+      if (!hull_ids.count(p.id)) {
+        cout << p.id << "\n";
+        break;
+      }
+    }
+  } else {
+    cout << 2 << "\n";
+    cout << hull[0].id << " " << hull[2].id << "\n";
+  }
+
+  return 0;
+}
