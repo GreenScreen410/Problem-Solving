@@ -1,0 +1,28 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+template <typename T>
+struct Point {
+  T x, y;
+  auto operator<=>(const Point<T>&) const = default;
+  Point operator-(const Point& other) const { return {x - other.x, y - other.y}; }
+  int sign(T v) const { return (v > 0) - (v < 0); }
+  T cross(const Point& other) const { return x * other.y - y * other.x; }
+  T ccw(const Point<T>& b, const Point<T>& c) const { return (b - *this).cross(c - *this); }
+};
+
+auto line_intersection(auto a, auto b, auto c, auto d) {
+  int ab = a.sign(a.ccw(b, c)) * a.sign(a.ccw(b, d));
+  int cd = c.sign(c.ccw(d, a)) * c.sign(c.ccw(d, b));
+  if (ab == 0 && cd == 0) return min(a, b) <= max(c, d) && min(c, d) <= max(a, b);
+  return ab < 0 && cd < 0;
+}
+
+int main() {
+  Point<int> a, b, c, d;
+  cin >> a.x >> a.y >> b.x >> b.y >> c.x >> c.y >> d.x >> d.y;
+
+  cout << (line_intersection(a, b, c, d) ? "1\n" : "0\n");
+
+  return 0;
+}
