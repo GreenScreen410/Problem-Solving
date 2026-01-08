@@ -1,0 +1,42 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+template <typename T>
+struct Point {
+  T x, y;
+  auto operator<=>(const Point<T>&) const = default;
+  Point operator-(const Point& other) const { return {x - other.x, y - other.y}; }
+  int sign(T v) const { return (v > 0) - (v < 0); }
+  T cross(const Point& other) const { return x * other.y - y * other.x; }
+  T ccw(const Point<T>& b, const Point<T>& c) const { return (b - *this).cross(c - *this); }
+  T norm2() const { return x * x + y * y; }
+  T dist2(const Point<T>& other) const { return (*this - other).norm2(); }
+  long double dist(const Point<T>& other) const { return sqrtl(dist2(other)); }
+};
+
+bool line_intersection(auto a, auto b, auto c, auto d) {
+  int ab = a.sign(a.ccw(b, c)) * a.sign(a.ccw(b, d));
+  int cd = c.sign(c.ccw(d, a)) * c.sign(c.ccw(d, b));
+  if (ab == 0 && cd == 0) return min(a, b) <= max(c, d) && min(c, d) <= max(a, b);
+  return ab < 0 && cd < 0;
+}
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(NULL);
+
+  Point<double> l1, l2, w1, w2;
+  int x = 1;
+  while (cin >> l1.x >> l1.y >> l2.x >> l2.y) {
+    if (l1.x == 0 && l1.y == 0 && l2.x == 0 && l2.y == 0) break;
+    cin >> w1.x >> w1.y >> w2.x >> w2.y;
+
+    double time;
+    if (!line_intersection(l1, l2, w1, w2)) time = l1.dist(l2) / 2.0;
+    else time = min(l1.dist(w1) + w1.dist(l2), l1.dist(w2) + w2.dist(l2)) / 2.0;
+
+    cout << "Case " << x++ << ": " << fixed << setprecision(3) << time << "\n";
+  }
+
+  return 0;
+}
