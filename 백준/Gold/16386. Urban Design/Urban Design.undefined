@@ -1,0 +1,47 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+template <typename T>
+struct Point {
+  T x, y;
+  auto operator<=>(const Point<T>&) const = default;
+  Point operator-(const Point& other) const { return {x - other.x, y - other.y}; }
+  T cross(const Point& other) const { return x * other.y - y * other.x; }
+  T ccw(const Point<T>& b, const Point<T>& c) const { return (b - *this).cross(c - *this); }
+};
+
+bool separates(auto a, auto b, auto c, auto d) {
+  auto ccw1 = a.ccw(b, c);
+  auto ccw2 = a.ccw(b, d);
+  return (ccw1 > 0 && ccw2 < 0) || (ccw1 < 0 && ccw2 > 0);
+}
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(NULL);
+
+  int S;
+  if (cin >> S) {
+    vector<pair<Point<long long>, Point<long long>>> streets(S);
+    for (auto& [p1, p2] : streets) {
+      cin >> p1.x >> p1.y >> p2.x >> p2.y;
+    }
+
+    int T;
+    cin >> T;
+    while (T--) {
+      Point<long long> p1, p2;
+      cin >> p1.x >> p1.y >> p2.x >> p2.y;
+
+      int count = 0;
+      for (const auto& street : streets) {
+        if (separates(street.first, street.second, p1, p2)) count++;
+      }
+
+      if (count % 2 == 0) cout << "same\n";
+      else cout << "different\n";
+    }
+  }
+
+  return 0;
+}
