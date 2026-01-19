@@ -1,0 +1,64 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Point {
+  long long x, y;
+  auto operator<=>(const Point&) const = default;
+  Point operator+(const Point& o) const { return {x + o.x, y + o.y}; }
+  Point operator-(const Point& o) const { return {x - o.x, y - o.y}; }
+  long long cross(const Point& o) const { return x * o.y - y * o.x; }
+};
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(NULL);
+
+  int n, m;
+  cin >> n >> m;
+
+  vector<Point> A(n), B(m);
+  for (auto& p : A) cin >> p.x >> p.y;
+  for (auto& p : B) cin >> p.x >> p.y;
+
+  auto rotate_polygon = [](vector<Point>& P) {
+    reverse(P.begin(), P.end());
+    rotate(P.begin(), min_element(P.begin(), P.end()), P.end());
+  };
+
+  rotate_polygon(A);
+  rotate_polygon(B);
+
+  vector<Point> C;
+  int i = 0, j = 0;
+  while (i < n || j < m) {
+    C.push_back(A[i % n] + B[j % m]);
+    Point edge_A = A[(i + 1) % n] - A[i % n];
+    Point edge_B = B[(j + 1) % m] - B[j % m];
+    long long cp = edge_A.cross(edge_B);
+    if (i < n && (j == m || cp > 0)) i++;
+    else if (j < m && (i == n || cp < 0)) j++;
+    else {
+      i++;
+      j++;
+    }
+  }
+
+  __int128 area2 = 0;
+  for (int k = 0; k < C.size(); k++) {
+    area2 += (__int128)C[k].cross(C[(k + 1) % C.size()]);
+  }
+  if (area2 < 0) area2 = -area2;
+
+  string result;
+  if (area2 == 0) result = "0";
+  else {
+    while (area2 > 0) {
+      result += (char)('0' + (area2 % 10));
+      area2 /= 10;
+    }
+    reverse(result.begin(), result.end());
+  }
+  cout << result << "\n";
+
+  return 0;
+}
