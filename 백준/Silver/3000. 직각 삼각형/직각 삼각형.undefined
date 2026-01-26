@@ -1,0 +1,28 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Point {
+  int x, y;
+};
+
+int main() {
+  int N;
+  cin >> N;
+  
+  vector<Point> points(N);
+  vector<long long> count_x(100001), count_y(100001);
+  for (int i = 0; i < N; i++) {
+    cin >> points[i].x >> points[i].y;
+    count_x[points[i].x]++;
+    count_y[points[i].y]++;
+  }
+  
+  long long total = 0;
+  for (int i = 0; i < N; i++) {
+    total += (count_x[points[i].x] - 1) * (count_y[points[i].y] - 1);
+  }
+  
+  cout << total << "\n";
+  
+  return 0;
+}
