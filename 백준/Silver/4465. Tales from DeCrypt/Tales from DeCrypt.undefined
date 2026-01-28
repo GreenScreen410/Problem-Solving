@@ -1,0 +1,30 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  long long a, m, s;
+  cin >> a >> m >> s;
+
+  string x;
+  getline(cin, x);
+  
+  char c;
+  while (cin.get(c)) {
+    int ascii = (unsigned char)c;
+    
+    if (ascii >= 32 && ascii <= 126) {
+      int k = ceil(95.0 - (double)(s % m) / m * 95.0);
+      
+      int original = (ascii - 32 - k) % 95;
+      if (original < 0) original += 95;
+      
+      cout << (char)(original + 32);
+      
+      s = (a * s + 1) % m;
+    } else {
+      cout << c;
+    }
+  }
+
+  return 0;
+}
