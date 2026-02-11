@@ -1,0 +1,100 @@
+#include <bits/stdc++.h>
+using namespace std;
+const long double EPS = 1e-9;
+
+struct Point {
+  long double x, y;
+  Point operator+(const Point& o) const { return {x + o.x, y + o.y}; }
+  Point operator-(const Point& o) const { return {x - o.x, y - o.y}; }
+  Point operator*(long double k) const { return {x * k, y * k}; }
+  long double cross(const Point& o) const { return x * o.y - y * o.x; }
+  long double norm() const { return hypot(x, y); }
+};
+
+struct Line {
+  Point p, dir;
+  long double angle;
+  Line(Point p, Point dir) : p(p), dir(dir) { angle = atan2(dir.y, dir.x); }
+  bool on_left(const Point& q) const { return dir.cross(q - p) > -EPS; }
+  Point intersect(const Line& o) const {
+    long double t = (o.p - p).cross(o.dir) / dir.cross(o.dir);
+    return p + dir * t;
+  }
+};
+
+vector<Point> half_plane_intersection(vector<Line>& lines) {
+  sort(lines.begin(), lines.end(), [](const Line& a, const Line& b) {
+    return a.angle < b.angle;
+  });
+
+  deque<Line> dq;
+  for (auto& l : lines) {
+    if (!dq.empty() && abs(dq.back().angle - l.angle) < EPS) {
+      if (dq.back().on_left(l.p)) {
+        dq.pop_back();
+      } else {
+        continue;
+      }
+    }
+    
+    while (dq.size() >= 2 && !l.on_left(dq.back().intersect(dq[dq.size() - 2]))) {
+      dq.pop_back();
+    }
+    while (dq.size() >= 2 && !l.on_left(dq.front().intersect(dq[1]))) {
+      dq.pop_front();
+    }
+    dq.push_back(l);
+  }
+  
+  while (dq.size() >= 3 && !dq.front().on_left(dq.back().intersect(dq[dq.size() - 2]))) {
+    dq.pop_back();
+  }
+  while (dq.size() >= 3 && !dq.back().on_left(dq.front().intersect(dq[1]))) {
+    dq.pop_front();
+  }
+  
+  vector<Point> res;
+  for (size_t i = 0; i < dq.size(); i++) {
+    res.push_back(dq[i].intersect(dq[(i + 1) % dq.size()]));
+  }
+  return res;
+}
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+  
+  int N;
+  long double W, H;
+  cin >> N >> W >> H;
+  
+  vector<Point> stations(N);
+  for (auto& p : stations) cin >> p.x >> p.y;
+  
+  long double max_dist = 0;
+  for (int i = 0; i < N; i++) {
+    vector<Line> lines;
+    
+    lines.emplace_back(Point{0, 0}, Point{1, 0});
+    lines.emplace_back(Point{W, 0}, Point{0, 1});
+    lines.emplace_back(Point{W, H}, Point{-1, 0});
+    lines.emplace_back(Point{0, H}, Point{0, -1});
+    
+    for (int j = 0; j < N; j++) {
+      if (i == j) continue;
+      Point mid = (stations[i] + stations[j]) * 0.5;
+      Point vec = stations[j] - stations[i];
+      Point normal = {-vec.y, vec.x};
+      lines.emplace_back(mid, normal);
+    }
+    
+    vector<Point> cell = half_plane_intersection(lines);
+    for (const auto& v : cell) {
+      max_dist = max(max_dist, (v - stations[i]).norm());
+    }
+  }
+  
+  cout << fixed << setprecision(10) << max_dist << "\n";
+  
+  return 0;
+}
