@@ -1,20 +1,20 @@
+template <typename T = long long>
 struct FenwickTree {
-  int n;
-  vector<long long> tree;
+  vector<T> tree;
 
-  FenwickTree(int n) : n(n), tree(n + 1) {}
+  FenwickTree(int n) : tree(n + 1) {}
 
-  void add(int i, long long diff) {
-    for (i++; i <= n; i += i & -i) tree[i] += diff;
+  void add(int i, auto v) {
+    for (i++; i < ssize(tree); i += i & -i) tree[i] += v;
   }
 
-  long long sum(int i) {
-    long long result = 0;
-    for (i++; i > 0; i -= i & -i) result += tree[i];
-    return result;
+  T sum(int i) {
+    T res = 0;
+    for (i++; i > 0; i -= i & -i) res += tree[i];
+    return res;
   }
 
-  long long query(int l, int r) {
+  T query(int l, int r) {
     return sum(r - 1) - sum(l - 1);
   }
 };
