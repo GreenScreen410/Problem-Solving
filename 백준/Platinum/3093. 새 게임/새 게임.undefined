@@ -1,0 +1,54 @@
+#include <bits/stdc++.h>
+#include <ext/rope>
+using namespace std;
+using namespace __gnu_cxx;
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(NULL);
+
+  int N, Q;
+  cin >> N >> Q;
+
+  rope<int> rp;
+  while (N--) {
+    int x;
+    cin >> x;
+    rp.push_back(x);
+  }
+
+  while (Q--) {
+    char c;
+    cin >> c;
+
+    if (c == 'L') {
+      int a, b, k;
+      cin >> a >> b >> k;
+      a--;
+      b--;
+
+      rope<int> sub = rp.substr(a, k);
+      rp.erase(a, k);
+      rp.insert(b - k + 1, sub);
+    }
+
+    else if (c == 'R') {
+      int a, b, k;
+      cin >> a >> b >> k;
+      a--;
+      b--;
+
+      rope<int> sub = rp.substr(b - k + 1, k);
+      rp.erase(b - k + 1, k);
+      rp.insert(a, sub);
+    }
+
+    else {
+      int x;
+      cin >> x;
+      cout << rp[x - 1] << "\n";
+    }
+  }
+
+  return 0;
+}
