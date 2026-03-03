@@ -1,0 +1,35 @@
+#include <bits/stdc++.h>
+#include <ext/rope>
+using namespace std;
+using namespace __gnu_cxx;
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  string S;
+  cin >> S;
+
+  crope rope(S.c_str());
+
+  int Q;
+  cin >> Q;
+
+  while (Q--) {
+    int t, x, y;
+    cin >> t;
+
+    if (t == 1) {
+      cin >> x >> y;
+      rope = rope.substr(x, y - x + 1) + rope.substr(0, x) + rope.substr(y + 1, S.size());
+    } else if (t == 2) {
+      cin >> x >> y;
+      rope = rope.substr(0, x) + rope.substr(y + 1, S.size()) + rope.substr(x, y - x + 1);
+    } else {
+      cin >> x;
+      cout << rope[x] << "\n";
+    }
+  }
+
+  return 0;
+}
