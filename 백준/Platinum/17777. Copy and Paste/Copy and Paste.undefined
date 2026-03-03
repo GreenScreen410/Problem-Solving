@@ -1,0 +1,33 @@
+#include <bits/stdc++.h>
+#include <ext/rope>
+using namespace std;
+using namespace __gnu_cxx;
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(NULL);
+
+  int M;
+  cin >> M;
+
+  string S;
+  cin >> S;
+
+  int N;
+  cin >> N;
+
+  crope rp(S.c_str());
+
+  while (N--) {
+    int A, B, C;
+    cin >> A >> B >> C;
+
+    crope sub = rp.substr(A, B - A);
+    rp.insert(C, sub);
+    if (rp.size() > M) rp.erase(M, rp.size() - M);
+  }
+
+  cout << rp << "\n";
+
+  return 0;
+}
