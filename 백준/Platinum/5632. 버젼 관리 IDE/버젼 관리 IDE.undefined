@@ -1,0 +1,57 @@
+#include <bits/stdc++.h>
+#include <ext/rope>
+using namespace std;
+using namespace __gnu_cxx;
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  int T;
+  cin >> T;
+
+  vector<crope> versions;
+  versions.push_back(crope());
+
+  int d = 0;
+  while (T--) {
+    int type;
+    cin >> type;
+
+    if (type == 1) {
+      int p;
+      string s;
+      cin >> p >> s;
+      p -= d;
+
+      crope current = versions.back();
+      current.insert(p, s.c_str());
+      versions.push_back(current);
+    } else if (type == 2) {
+      int p, c;
+      cin >> p >> c;
+      p -= d;
+      c -= d;
+
+      crope current = versions.back();
+      current.erase(p - 1, c);
+      versions.push_back(current);
+    } else if (type == 3) {
+      int v, p, c;
+      cin >> v >> p >> c;
+      v -= d;
+      p -= d;
+      c -= d;
+
+      crope current = versions[v];
+      string out = current.substr(p - 1, c).c_str();
+      cout << out << "\n";
+
+      for (char c : out) {
+        if (c == 'c') d++;
+      }
+    }
+  }
+
+  return 0;
+}
