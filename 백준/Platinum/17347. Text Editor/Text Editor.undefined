@@ -1,0 +1,59 @@
+#include <bits/stdc++.h>
+#include <ext/rope>
+using namespace std;
+using namespace __gnu_cxx;
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(NULL);
+
+  int t;
+  cin >> t;
+
+  crope text;
+  int cursor = 0;
+  while (t--) {
+    string t;
+    cin >> t;
+
+    if (t == "Move") {
+      int k;
+      cin >> k;
+      cursor = k;
+    }
+
+    else if (t == "Insert") {
+      int n;
+      cin >> n;
+
+      string s;
+      s.reserve(n);
+      int count = 0;
+      while (count < n) {
+        char c = cin.get();
+        if (c >= 32 && c <= 126) {
+          s += c;
+          count++;
+        }
+      }
+      text.insert(cursor, s.data(), n);
+    }
+
+    else if (t == "Delete") {
+      int n;
+      cin >> n;
+      text.erase(cursor, n);
+    }
+    else if (t == "Get") {
+      int n;
+      cin >> n;
+      cout << text.substr(cursor, n).c_str() << "\n";
+    }
+    
+    else if (t == "Prev") cursor--;
+    
+    else if (t == "Next") cursor++;
+  }
+
+  return 0;
+}
