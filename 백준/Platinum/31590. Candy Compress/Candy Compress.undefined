@@ -1,0 +1,38 @@
+#include <bits/stdc++.h>
+#include <ext/rope>
+using namespace std;
+using namespace __gnu_cxx;
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  int n, q;
+  cin >> n >> q;
+
+  string s;
+  cin >> s;
+
+  crope rp(s.c_str());
+
+  while (q--) {
+    int t;
+    cin >> t;
+    if (t == 1) {
+      char c;
+      int i;
+      cin >> c >> i;
+      rp.insert(i - 1, c);
+    }
+
+    else {
+      int l, r;
+      cin >> l >> r;
+      int len = r - l + 1;
+      cout << rp.substr(l - 1, len) << "\n";
+      rp.erase(l - 1, len);
+    }
+  }
+
+  return 0;
+}
