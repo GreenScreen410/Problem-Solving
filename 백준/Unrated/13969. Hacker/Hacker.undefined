@@ -1,0 +1,50 @@
+#include <bits/stdc++.h>
+#include <ext/rope>
+using namespace std;
+using namespace __gnu_cxx;
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  string S;
+  cin >> S;
+
+  int Q;
+  cin >> Q;
+
+  crope current(S.c_str()), old(S.c_str());
+  while (Q--) {
+    int t;
+    cin >> t;
+
+    if (t == 1) {
+      int i, j, k;
+      cin >> i >> j >> k;
+      int len = j - i + 1;
+      if (current.substr(i - 1, len) == current.substr(k - 1, len)) cout << "Y\n";
+      else cout << "N\n";
+    }
+
+    else if (t == 2) {
+      int i, j, k;
+      cin >> i >> j >> k;
+      int len = j - i + 1;
+      current.erase(i - 1, len);
+      current.insert(i - 1, old.substr(k - 1, len));
+    }
+
+    else if (t == 3) {
+      int i, j;
+      cin >> i >> j;
+      for (int pos = i - 1; pos < j; pos++) {
+        char c = current[pos];
+        if (c == 'z') c = 'a';
+        else c++;
+        current.replace(pos, c);
+      }
+    }
+  }
+
+  return 0;
+}
