@@ -1,0 +1,5 @@
+a1 = int(input())
+a2 = int(input())
+a3 = int(input())
+a4 = int(input())
+print(max(min(a1, a2) * min(a3, a4), min(a1, a3) * min(a2, a4), min(a1, a4) * min(a2, a3)))
