@@ -1,6 +1,6 @@
 # [Diamond IV] Big Brother - 21048 
 
-[문제 링크](https://www.acmicpc.net/problem/21048) 
+[문제 링크](https://acmicpc.net/problem/21048) 
 
 ### 성능 요약
 
@@ -8,7 +8,7 @@
 
 ### 분류
 
-기하학, 다각형의 넓이, 반평면 교집합
+기하학, 반평면 교집합, 다각형의 넓이
 
 ### 제출 일자
 
